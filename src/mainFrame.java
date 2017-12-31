@@ -27,7 +27,7 @@ public class mainFrame extends JFrame implements ActionListener {
         jmenuHelp = new JMenu("Help");
         jmenuHelp.setFont(f121);
         jmenuHelp.setMnemonic(KeyEvent.VK_H);
-        jmenuitemAbout = new JMenuItem("About Calculator");
+        jmenuitemAbout = new JMenuItem("About CRUD9000");
         jmenuitemAbout.setFont(f12);
         jmenuHelp.add(jmenuitemAbout);
         JMenuBar mb = new JMenuBar();
@@ -39,7 +39,7 @@ public class mainFrame extends JFrame implements ActionListener {
 
     }
     public void actionPerformed(ActionEvent e) {
-
+        
     }
     void HelloWorldFrame() {
         JLabel jlbHelloWorld = new JLabel("Hello World");

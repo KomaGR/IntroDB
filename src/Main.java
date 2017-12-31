@@ -32,6 +32,7 @@ public class Main {
             Statement s = conn.createStatement();
             ResultSet rs = s.executeQuery(query);
 
+
             while (rs.next()) {
 
                 int id = rs.getInt("Store_id");
@@ -45,6 +46,9 @@ public class Main {
                 JLabel row = new JLabel(String.format("%s, %s, %s, %s, %s\n", id, firstName, lastName, dateCreated, city));
                 frame.add(row);
 //                frame.add(new JLabel("Happy New Year!"));
+                String[] columnNames = {"Store_id", "Street", "Street_Number", "Postal_Code", "City"};
+
+                JTable db_result = new JTable(data,columnNames);
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
