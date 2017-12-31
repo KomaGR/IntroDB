@@ -44,7 +44,7 @@ public class Main {
                 System.out.format("%s, %s, %s, %s, %s\n", id, firstName, lastName, dateCreated, city);
                 JLabel row = new JLabel(String.format("%s, %s, %s, %s, %s\n", id, firstName, lastName, dateCreated, city));
                 frame.add(row);
-
+//                frame.add(new JLabel("Happy New Year!"));
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
