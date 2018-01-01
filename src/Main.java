@@ -1,7 +1,9 @@
 import javax.swing.*;
 import java.awt.*;
 import java.sql.*;
+import java.util.Arrays;
 import java.util.Properties;
+import java.util.Vector;
 
 public class Main {
 
@@ -34,24 +36,32 @@ public class Main {
             ResultSet rs = s.executeQuery(query);
 
 
-            while (rs.next()) {
-
-                int id = rs.getInt("Store_id");
-                String firstName = rs.getString("Street");
-                String lastName = rs.getString("Street_Number");
-                String dateCreated = rs.getString("Postal_Code");
-                String city = rs.getString("City");
-
-                // print the results
-                System.out.format("%s, %s, %s, %s, %s\n", id, firstName, lastName, dateCreated, city);
-                JLabel row = new JLabel(String.format("%s, %s, %s, %s, %s\n", id, firstName, lastName, dateCreated, city));
-                frame.add(row);
-//                frame.add(new JLabel("Happy New Year!"));
-                String[] columnNames = dataPort.getColumnNames(rs);
-                Object[][] data = dataPort.getData(rs);
-
-                JTable db_result = new JTable(,columnNames);
-            }
+//            while (rs.next()) {
+//
+//                int id = rs.getInt("Store_id");
+//                String firstName = rs.getString("Street");
+//                String lastName = rs.getString("Street_Number");
+//                String dateCreated = rs.getString("Postal_Code");
+//                String city = rs.getString("City");
+//                // print the results
+//                System.out.format("%s, %s, %s, %s, %s\n", id, firstName, lastName, dateCreated, city);
+//
+////                JLabel row = new JLabel(String.format("%s, %s, %s, %s, %s\n", id, firstName, lastName, dateCreated, city));
+////                frame.add(row);
+//////                frame.add(new JLabel("Happy New Year!"));
+////                JFrame frame = new JFrame("Table");
+////                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//            }
+            //Create and set up the window.
+            JFrame frame = new JFrame("SimpleTableDemo");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            //Create and set up the content pane.
+            tablePanel newContentPane = new tablePanel(rs);
+            newContentPane.setOpaque(true); //content panes must be opaque
+            frame.setContentPane(newContentPane);
+            //Display the window.
+            frame.pack();
+            frame.setVisible(true);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }

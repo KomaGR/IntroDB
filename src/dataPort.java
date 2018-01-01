@@ -27,4 +27,14 @@ public class dataPort {
         }
         return data;
     }
+    public Object[][] toObjectArray(Vector<String[]> vec) {
+        String[][] strArrArr = new String[vec.size()][vec.firstElement().length];
+        for (int i = 0; i < vec.size(); i++) {
+            String[] strArr = vec.elementAt(i);
+            for (int j = 0; j < strArr.length; j++) {
+                strArrArr[i][j] = strArr[j];
+            }
+        }
+        return strArrArr;
+    }
 }

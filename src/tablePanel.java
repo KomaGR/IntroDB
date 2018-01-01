@@ -1,0 +1,29 @@
+import javax.swing.*;
+import java.awt.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Vector;
+
+public class tablePanel extends JPanel {
+    static dataPort dataPort = new dataPort();
+    public tablePanel(ResultSet rs) throws SQLException {
+        super(new GridLayout(1,0));
+        //Get data ready to display
+        Vector<String> vecColNames = new Vector<>(rs.getMetaData().getColumnCount());
+        String[] columnNames = dataPort.getColumnNames(rs);
+        vecColNames.addAll(Arrays.asList(columnNames));
+        Vector<String[]> data = dataPort.getData(rs);
+//        JTable resultTable = new JTable(data,vecColNames);
+        JTable resultTable = new JTable(dataPort.toObjectArray(data),dataPort.getColumnNames(rs));
+
+        resultTable.setPreferredScrollableViewportSize(new Dimension(500, 70));
+        resultTable.setFillsViewportHeight(true);
+
+        //Create the scroll pane and add the table to it.
+        JScrollPane scrollPane = new JScrollPane(resultTable);
+
+        //Add the scroll pane to this panel.
+        add(scrollPane);
+    }
+}
