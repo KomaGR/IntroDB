@@ -7,6 +7,7 @@ public class Main {
 
     static Connection conn;
     static mainFrame frame;
+    static dataPort dataPort;
     private static connectionManager sql_manager;
     private static String conn_username = "dbapp";
     private static String password = "p!nkp@anther";
@@ -46,9 +47,10 @@ public class Main {
                 JLabel row = new JLabel(String.format("%s, %s, %s, %s, %s\n", id, firstName, lastName, dateCreated, city));
                 frame.add(row);
 //                frame.add(new JLabel("Happy New Year!"));
-                String[] columnNames = {"Store_id", "Street", "Street_Number", "Postal_Code", "City"};
+                String[] columnNames = dataPort.getColumnNames(rs);
+                Object[][] data = dataPort.getData(rs);
 
-                JTable db_result = new JTable(data,columnNames);
+                JTable db_result = new JTable(,columnNames);
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
