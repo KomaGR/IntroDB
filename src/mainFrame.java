@@ -9,7 +9,7 @@ public class mainFrame extends JFrame {
 
     // Constructor
 
-    public mainFrame(String s) throws HeadlessException {
+    public mainFrame(String s) throws HeadlessException, SQLException {
         super(s);
         setVisible(true);
 
@@ -39,29 +39,25 @@ public class mainFrame extends JFrame {
         item1.addActionListener(mwl);
         usage.addActionListener(mwl);
         about.addActionListener(mwl);
-        try {
-            tablePanel contentPane = new tablePanel(Main.rs);
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        setContentPane(contentPane);
-        //Display the window.
+
+        tablePanel contentPane = new tablePanel(Main.rs);
+        contentPane.setOpaque(true); //content panes must be opaque
+
+        Container cont = this.getContentPane();
+        cont.add(new JSeparator(),BorderLayout.LINE_START);
+        cont.add(contentPane,BorderLayout.LINE_START);
+
+        this.addWindowListener(mwl);
         pack();
 
-        this.setDefaultCloseOperation(JEXIT_ON_CLOSE);
-
-
     }
 
-    public void actionPerformed(ActionEvent e) {
-        
-    }
 
     private class MyWindowListener extends WindowAdapter implements ActionListener {
         public void windowClosing(WindowEvent event) {
             System.out.println("Exit window app");
             int anw = JOptionPane.showConfirmDialog(null,"Would you like to save text?","Exit",JOptionPane.YES_NO_OPTION);
-            /*HERE WE MUST SAVE CHANGES*/
+            //TODO: /*HERE WE MUST SAVE CHANGES*/
             System.exit(0);
         }
 

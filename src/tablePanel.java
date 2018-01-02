@@ -21,7 +21,9 @@ public class tablePanel extends JPanel implements ItemListener {
         JTable resultTable = new JTable(dataPort.toObjectArray(data),dataPort.getColumnNames(rs));
 
         resultTable.setPreferredScrollableViewportSize(new Dimension(900, 500));
+
         resultTable.setFillsViewportHeight(true);
+
 
         //Create the scroll pane and add the table to it.
         JScrollPane scrollPane = new JScrollPane(resultTable);
@@ -29,8 +31,7 @@ public class tablePanel extends JPanel implements ItemListener {
         renderView();
         add(scrollPane);
         //Create and set up the content pane.
-        setOpaque(true); //content panes must be opaque
-        setVisible(true);
+
     }
 
     private void renderView() {

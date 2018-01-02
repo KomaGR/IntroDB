@@ -27,7 +27,7 @@ public class Main {
 
             // An example Query
             String query = "SELECT * FROM Employee";
-            query = "SELECT Store.Store_id, Phone_Number.Phone_Number, Store.Street, Store.Street_Number, Store.City FROM Store INNER JOIN Phone_Number ON Store.Store_id = Phone_Number.Store_id";
+//            query = "SELECT Store.Store_id, Phone_Number.Phone_Number, Store.Street, Store.Street_Number, Store.City FROM Store INNER JOIN Phone_Number ON Store.Store_id = Phone_Number.Store_id";
             Statement s = conn.createStatement();
             rs = s.executeQuery(query);
 
