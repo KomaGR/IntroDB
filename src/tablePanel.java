@@ -1,12 +1,15 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Vector;
 
-public class tablePanel extends JPanel {
+public class tablePanel extends JPanel implements ItemListener {
     static dataPort dataPort = new dataPort();
+
     public tablePanel(ResultSet rs) throws SQLException {
         super(new GridLayout(1,0));
         //Get data ready to display
@@ -22,8 +25,20 @@ public class tablePanel extends JPanel {
 
         //Create the scroll pane and add the table to it.
         JScrollPane scrollPane = new JScrollPane(resultTable);
-
         //Add the scroll pane to this panel.
+        renderView();
         add(scrollPane);
+        //Create and set up the content pane.
+        setOpaque(true); //content panes must be opaque
+        setVisible(true);
+    }
+
+    private void renderView() {
+
+    }
+
+    @Override
+    public void itemStateChanged(ItemEvent itemEvent) {
+
     }
 }
