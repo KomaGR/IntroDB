@@ -31,7 +31,7 @@ public class Main {
             conn = sql_manager.getConnection();
 
             // An example Query
-            String query = "SELECT * FROM Store";
+            String query = "SELECT * FROM Employee";
             Statement s = conn.createStatement();
             ResultSet rs = s.executeQuery(query);
 
@@ -53,7 +53,7 @@ public class Main {
 ////                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //            }
             //Create and set up the window.
-            JFrame frame = new JFrame("SimpleTableDemo");
+            JFrame frame = new JFrame("CRUD9000");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             //Create and set up the content pane.
             tablePanel newContentPane = new tablePanel(rs);

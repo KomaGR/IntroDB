@@ -17,7 +17,7 @@ public class tablePanel extends JPanel {
 //        JTable resultTable = new JTable(data,vecColNames);
         JTable resultTable = new JTable(dataPort.toObjectArray(data),dataPort.getColumnNames(rs));
 
-        resultTable.setPreferredScrollableViewportSize(new Dimension(500, 70));
+        resultTable.setPreferredScrollableViewportSize(new Dimension(900, 500));
         resultTable.setFillsViewportHeight(true);
 
         //Create the scroll pane and add the table to it.
