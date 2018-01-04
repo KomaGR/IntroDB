@@ -41,11 +41,12 @@ public class mainFrame extends JFrame {
         about.addActionListener(mwl);
 
         tablePanel contentPane = new tablePanel(Main.rs);
+        contentPane.registerParent(this);
         contentPane.setOpaque(true); //content panes must be opaque
 
         Container cont = this.getContentPane();
         cont.add(new JSeparator(),BorderLayout.LINE_START);
-        cont.add(contentPane,BorderLayout.LINE_START);
+        cont.add(contentPane.getScrollPane(),BorderLayout.CENTER);
 
         this.addWindowListener(mwl);
         pack();

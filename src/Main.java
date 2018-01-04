@@ -26,11 +26,11 @@ public class Main {
             conn = sql_manager.getConnection();
 
             // An example Query
-            String query = "SELECT * FROM Employee";
+//            String query = "SELECT * FROM Employee";
 //            query = "SELECT Store.Store_id, Phone_Number.Phone_Number, Store.Street, Store.Street_Number, Store.City FROM Store INNER JOIN Phone_Number ON Store.Store_id = Phone_Number.Store_id";
-            Statement s = conn.createStatement();
-            rs = s.executeQuery(query);
-
+//            Statement s =  .createStatement();
+//            rs = s.executeQuery(query);
+            rs = sql_manager.getClients("First_Name",true);
 
             //Create and set up the window.
             mainFrame mFrame = new mainFrame("CRUD9000");
