@@ -72,5 +72,8 @@ public class connectionManager {
         return pstmt.executeQuery();
     }
 
+    public queryBuffer getqBuffer() {
+        return qBuffer;
+    }
 }
 

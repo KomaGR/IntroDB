@@ -9,7 +9,7 @@ public class Main {
 
     static Connection conn;
     static mainFrame frame;
-    static dataPort dataPort;
+    static dataPort dataPort = new dataPort();
     private static connectionManager sql_manager;
     private static String conn_username = "dbapp";
     private static String password = "p!nkp@anther";
@@ -34,8 +34,13 @@ public class Main {
 
             //Create and set up the window.
             mainFrame mFrame = new mainFrame("CRUD9000");
+            mFrame.registerSQLManager(sql_manager);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    public static connectionManager getSql_manager() {
+        return sql_manager;
     }
 }

@@ -46,12 +46,44 @@ public class tablePanel extends JPanel implements ActionListener,TableModelListe
                 Point point = mouseEvent.getPoint();
                 int row = table.rowAtPoint(point);
                 if (mouseEvent.getClickCount() == 2) {
-                    System.out.println("Double click on row" + Integer.toString(row+1));
-                    //TODO: Pass click to the mainFrame
-                    if (parentFrame != null) {
-                        parentFrame.editRow()
-                    }
+                    //TODO: Case of no edit?
+                    System.out.println("Double click on row " + Integer.toString(row+1));
+                    JForm editForm = new JForm(columnNames,data.elementAt(row));
+                    JFrame popUpFrame = new JFrame("Edit row " + row);
+                    popUpFrame.setLayout(new FlowLayout());
+                    popUpFrame.add(editForm);
 
+                    JPanel askDonePan = new JPanel();
+                    // OK Button and Listener
+                    JButton okButton = new JButton("OK");
+                    okButton.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mouseClicked(MouseEvent mouseEvent) {
+                            super.mouseClicked(mouseEvent);
+                            System.out.println("Enqueue changes");
+                        }
+                    });
+                    askDonePan.add(okButton);
+                    // Cancel button and listener
+                    JButton cancelButton = new JButton("Cancel");
+                    cancelButton.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mouseClicked(MouseEvent mouseEvent) {
+                            super.mouseClicked(mouseEvent);
+                            System.out.println("Discard changes");
+                            popUpFrame.dispatchEvent(new WindowEvent(popUpFrame, WindowEvent.WINDOW_CLOSING));
+                        }
+                    });
+                    askDonePan.add(cancelButton);
+
+                    popUpFrame.add(askDonePan);
+
+                    popUpFrame.setSize(new Dimension(300,columnNames.length*30+30));
+                    popUpFrame.setVisible(true);
+                    popUpFrame.requestFocus();
+                    //TODO: Get changes
+
+;
                 }
             }
         });

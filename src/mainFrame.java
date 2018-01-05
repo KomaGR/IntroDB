@@ -1,11 +1,10 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.rmi.activation.ActivationInstantiator;
 import java.sql.SQLException;
 
 public class mainFrame extends JFrame {
-
+        private connectionManager sql_manager;
 
     // Constructor
 
@@ -53,12 +52,18 @@ public class mainFrame extends JFrame {
 
     }
 
+    public void registerSQLManager(connectionManager sql_manager) {
+        this.sql_manager = sql_manager;
+    }
+
 
     private class MyWindowListener extends WindowAdapter implements ActionListener {
         public void windowClosing(WindowEvent event) {
             System.out.println("Exit window app");
-            int anw = JOptionPane.showConfirmDialog(null,"Would you like to save text?","Exit",JOptionPane.YES_NO_OPTION);
-            //TODO: /*HERE WE MUST SAVE CHANGES*/
+            if (!sql_manager.getqBuffer().isEmpty()) {
+                int anw = JOptionPane.showConfirmDialog(null,"Would you like to save text?","Exit",JOptionPane.YES_NO_OPTION);
+            }
+            //TODO: /*Check uncommited changes.
             System.exit(0);
         }
 
