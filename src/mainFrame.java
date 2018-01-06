@@ -39,7 +39,7 @@ public class mainFrame extends JFrame {
         usage.addActionListener(mwl);
         about.addActionListener(mwl);
 
-        tablePanel contentPane = new tablePanel(Main.rs);
+        tablePanel contentPane = new tablePanel(Main.rs, sql_manager);
         contentPane.registerParent(this);
         contentPane.setOpaque(true); //content panes must be opaque
 
@@ -62,8 +62,10 @@ public class mainFrame extends JFrame {
             System.out.println("Exit window app");
             if (!sql_manager.getqBuffer().isEmpty()) {
                 int anw = JOptionPane.showConfirmDialog(null,"Would you like to save text?","Exit",JOptionPane.YES_NO_OPTION);
+                sql_manager.commitQueries();    //Commit changes
+            } else {
+                sql_manager.cancelQueries();
             }
-            //TODO: /*Check uncommited changes.
             System.exit(0);
         }
 

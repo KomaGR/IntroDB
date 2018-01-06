@@ -25,11 +25,6 @@ public class Main {
             sql_manager = new connectionManager(conn_username, password, "mysql", serverName, dbname, portNumber);
             conn = sql_manager.getConnection();
 
-            // An example Query
-//            String query = "SELECT * FROM Employee";
-//            query = "SELECT Store.Store_id, Phone_Number.Phone_Number, Store.Street, Store.Street_Number, Store.City FROM Store INNER JOIN Phone_Number ON Store.Store_id = Phone_Number.Store_id";
-//            Statement s =  .createStatement();
-//            rs = s.executeQuery(query);
             rs = sql_manager.getClients("First_Name",true);
 
             //Create and set up the window.
