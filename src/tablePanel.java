@@ -12,14 +12,20 @@ public class tablePanel extends JPanel implements ActionListener,TableModelListe
     static dataPort dataPort = new dataPort();
     JScrollPane scrollPane = null;
     private mainFrame parentFrame = null;
+    static connectionManager sql_manager = null;
+
+    public static void setSql_manager(connectionManager sql_manager) {
+        tablePanel.sql_manager = sql_manager;
+    }
 
     public void registerParent(mainFrame parent) {
         parentFrame = parent;
     }
 
-    public tablePanel(ResultSet rs) throws SQLException {
+    public tablePanel(ResultSet rs, connectionManager sql_manager) throws SQLException {
 //        super(new GridLayout(1,0));
         super(new BorderLayout());
+        setSql_manager(sql_manager);
 
 
         //Get data ready to display
@@ -46,7 +52,7 @@ public class tablePanel extends JPanel implements ActionListener,TableModelListe
                 Point point = mouseEvent.getPoint();
                 int row = table.rowAtPoint(point);
                 if (mouseEvent.getClickCount() == 2) {
-                    //TODO: Case of no edit?
+                    //TODO: Case of no allowed edit?
                     System.out.println("Double click on row " + Integer.toString(row+1));
                     JForm editForm = new JForm(columnNames,data.elementAt(row));
                     JFrame popUpFrame = new JFrame("Edit row " + row);
@@ -61,10 +67,19 @@ public class tablePanel extends JPanel implements ActionListener,TableModelListe
                         public void mouseClicked(MouseEvent mouseEvent) {
                             super.mouseClicked(mouseEvent);
                             System.out.println("Enqueue changes");
+                            //Close window and enqueue changes
+                            popUpFrame.dispatchEvent(new WindowEvent(popUpFrame, WindowEvent.WINDOW_CLOSING));
+                            String[] editedFields = editForm.getTextFields();
+                            if (editedFields != null) {
+                                //enqueue change
+                                String query = "UPDATE " + tableName + " "; //TODO: Find out where table name is
+                                sql_manager.getqBuffer().enqueue(query);
+
+                            }
                         }
                     });
                     askDonePan.add(okButton);
-                    // Cancel button and listener
+                    // Cancel button and onClick listener for window closing
                     JButton cancelButton = new JButton("Cancel");
                     cancelButton.addMouseListener(new MouseAdapter() {
                         @Override
@@ -113,6 +128,6 @@ public class tablePanel extends JPanel implements ActionListener,TableModelListe
 
     @Override
     public void tableChanged(TableModelEvent tableModelEvent) {
-
+        //Table can't change
     }
 }

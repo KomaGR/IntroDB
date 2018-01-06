@@ -75,5 +75,49 @@ public class connectionManager {
     public queryBuffer getqBuffer() {
         return qBuffer;
     }
+
+    public int commitQueries() {
+        Statement statement = null;
+        try {
+            statement = connection.createStatement();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        String query = null;
+        int count = 0;
+        while (!qBuffer.isEmpty()) {
+            try {
+                query = qBuffer.dequeue();
+                assert statement != null;
+                statement.addBatch(query);
+            } catch (NullPointerException | InterruptedException | SQLException e) {
+                System.out.println(e.getMessage());
+            }
+            count++;
+        }
+        try {
+            assert statement != null;
+            statement.executeBatch();
+        } catch (SQLException | NullPointerException e) {
+            System.out.println(e.getMessage());
+        }
+        return count;
+    }
+
+    public int cancelQueries() {
+        int count = 0;
+        while (!qBuffer.isEmpty()) {
+            try {
+                qBuffer.dequeue();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                System.out.println(e.getMessage());
+            }
+            count++;
+        }
+        return count;
+    }
+
+
 }
 
