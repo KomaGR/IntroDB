@@ -72,7 +72,7 @@ public class tablePanel extends JPanel implements ActionListener,TableModelListe
                             String[] editedFields = editForm.getTextFields();
                             if (editedFields != null) {
                                 //enqueue change
-                                String query = "UPDATE " + tableName + " "; //TODO: Find out where table name is!
+                                String query = "UPDATE " + tableName + " "; //TODO: Find out where table name is
                                 sql_manager.getqBuffer().enqueue(query);
 
                             }
