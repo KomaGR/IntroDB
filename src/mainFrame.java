@@ -62,6 +62,7 @@ public class mainFrame extends JFrame {
             System.out.println("Exit window app");
             if (!sql_manager.getqBuffer().isEmpty()) {
                 int anw = JOptionPane.showConfirmDialog(null,"Would you like to save text?","Exit",JOptionPane.YES_NO_OPTION);
+                System.out.println("Logged an X_CLOSE press");
                 sql_manager.commitQueries();    //Commit changes
             } else {
                 sql_manager.cancelQueries();

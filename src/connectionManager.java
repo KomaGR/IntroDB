@@ -4,12 +4,12 @@ import java.util.Properties;
 
 
 public class connectionManager {
-    private String userName;
-    private String password;
-    private String dbms;
-    private String serverName;
-    private String dbName;
-    private String portNumber;
+    private String userName = "dbapp";
+    private String password = "p!nkp@anther";
+    private String dbms = "mysql";
+    private String serverName = "snf-795627.vm.okeanos.grnet.gr";
+    private String dbName = "rentexdb";
+    private String portNumber = "3306";
     private queryBuffer qBuffer = new queryBuffer();
     private Connection connection = null;
 
@@ -87,10 +87,10 @@ public class connectionManager {
         int count = 0;
         while (!qBuffer.isEmpty()) {
             try {
-                query = qBuffer.dequeue();
+                query = qBuffer.pop();
                 assert statement != null;
                 statement.addBatch(query);
-            } catch (NullPointerException | InterruptedException | SQLException e) {
+            } catch (NullPointerException | SQLException e) {
                 System.out.println(e.getMessage());
             }
             count++;
@@ -107,12 +107,7 @@ public class connectionManager {
     public int cancelQueries() {
         int count = 0;
         while (!qBuffer.isEmpty()) {
-            try {
-                qBuffer.dequeue();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                System.out.println(e.getMessage());
-            }
+            qBuffer.pop();
             count++;
         }
         return count;

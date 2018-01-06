@@ -72,8 +72,8 @@ public class tablePanel extends JPanel implements ActionListener,TableModelListe
                             String[] editedFields = editForm.getTextFields();
                             if (editedFields != null) {
                                 //enqueue change
-                                String query = "UPDATE " + tableName + " "; //TODO: Find out where table name is
-                                sql_manager.getqBuffer().enqueue(query);
+                                String query = "UPDATE " + " "; //TODO: Find out where table name is
+                                sql_manager.getqBuffer().add(query);
 
                             }
                         }
@@ -93,12 +93,10 @@ public class tablePanel extends JPanel implements ActionListener,TableModelListe
 
                     popUpFrame.add(askDonePan);
 
-                    popUpFrame.setSize(new Dimension(300,columnNames.length*30+30));
+                    popUpFrame.setSize(new Dimension(300,columnNames.length*40+30));
                     popUpFrame.setVisible(true);
                     popUpFrame.requestFocus();
-                    //TODO: Get changes
-
-;
+                    //TODO: Get changes;
                 }
             }
         });

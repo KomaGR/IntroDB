@@ -1,9 +1,5 @@
-import javax.swing.*;
-import java.awt.*;
 import java.sql.*;
-import java.util.Arrays;
-import java.util.Properties;
-import java.util.Vector;
+
 
 public class Main {
 
@@ -22,7 +18,8 @@ public class Main {
     public static void main(String[] args) {
         try {
 
-            sql_manager = new connectionManager(conn_username, password, "mysql", serverName, dbname, portNumber);
+//            sql_manager = new connectionManager(conn_username, password, "mysql", serverName, dbname, portNumber);
+            sql_manager = new connectionManager();
             conn = sql_manager.getConnection();
 
             rs = sql_manager.getClients("First_Name",true);
