@@ -25,7 +25,7 @@ public class Main {
             rs = sql_manager.getClients("First_Name",true);
 
             //Create and set up the window.
-            mainFrame mFrame = new mainFrame("CRUD9000");
+            mainFrame mFrame = new mainFrame("CRUD9000",sql_manager);
             frame = mFrame;
             mFrame.registerSQLManager(sql_manager);
         } catch (SQLException e) {

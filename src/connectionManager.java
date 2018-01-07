@@ -25,6 +25,11 @@ public class connectionManager {
     public connectionManager() {
     }
 
+    public String[]  getOptions() {
+        //TODO: Pass correct view Options
+        return new String[]{"Mumbo","Jumbo","Dumbo","Django"};
+    }
+
     public Connection getConnection() throws SQLException {
 
         Connection conn = null;

@@ -8,10 +8,10 @@ public class mainFrame extends JFrame {
 
     // Constructor
 
-    public mainFrame(String s) throws HeadlessException, SQLException {
+    public mainFrame(String s, connectionManager sql_manager) throws HeadlessException, SQLException {
         super(s);
         setVisible(true);
-
+        this.sql_manager = sql_manager;
         // create menu bar
         MenuBar menuBar = new MenuBar();
         // Create menu
@@ -43,8 +43,10 @@ public class mainFrame extends JFrame {
         contentPane.registerParent(this);
         contentPane.setOpaque(true); //content panes must be opaque
 
+        controlPanel cPanel = new controlPanel(sql_manager);
+
         Container cont = this.getContentPane();
-        cont.add(new JSeparator(),BorderLayout.LINE_START);
+        cont.add(cPanel,BorderLayout.PAGE_START);
         cont.add(contentPane.getScrollPane(),BorderLayout.CENTER);
 
         this.addWindowListener(mwl);
