@@ -58,15 +58,25 @@ public class mainFrame extends JFrame {
 
 
     private class MyWindowListener extends WindowAdapter implements ActionListener {
+        @Override
         public void windowClosing(WindowEvent event) {
-            System.out.println("Exit window app");
+            System.out.println("Logged an X_CLOSE press.");
+            System.out.println("Exiting initialized.");
+            int qOpResult;
             if (!sql_manager.getqBuffer().isEmpty()) {
+                System.out.println("QBuffer contains queries.");
                 int anw = JOptionPane.showConfirmDialog(null,"Would you like to save text?","Exit",JOptionPane.YES_NO_OPTION);
-                System.out.println("Logged an X_CLOSE press");
-                sql_manager.commitQueries();    //Commit changes
+                System.out.println(anw);
+                if (anw == 0 ) {    //0 is YES Button
+                    qOpResult = sql_manager.commitQueries();    //Commit changes
+                }
             } else {
-                sql_manager.cancelQueries();
+                System.out.println("QBuffer was found empty. Closing.");
+                qOpResult = sql_manager.cancelQueries();
             }
+            /*if (qOpResult != pushedQueries) {
+                //TODO: Throw problems
+            }*/
             System.exit(0);
         }
 

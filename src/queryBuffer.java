@@ -2,24 +2,18 @@ import java.util.*;
 
 public class queryBuffer extends LinkedList<String> {
     private String lastChange;
-    public queryBuffer() {
-        super();
 
-    }
-
-    public String undo() throws InterruptedException {
+    public String undo() {
         if (lastChange != null) {
-           lastChange = this.pop();     //TODO: This does not dequeue tha last that was enqueued!
+            lastChange = this.removeLast();
             return lastChange;
         } else return null;
     }
 
-
-    public String redo() throws InterruptedException {
+    public String redo() {
         this.add(lastChange);
         String temp = lastChange;
         lastChange = null;
         return temp;
     }
-
 }

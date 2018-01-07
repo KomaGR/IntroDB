@@ -58,6 +58,8 @@ public class tablePanel extends JPanel implements ActionListener,TableModelListe
                     JFrame popUpFrame = new JFrame("Edit row " + row);
                     popUpFrame.setLayout(new FlowLayout());
                     popUpFrame.add(editForm);
+                    popUpFrame.setLocation(mouseEvent.getLocationOnScreen());   //set pop up location
+                    popUpFrame.setAlwaysOnTop(true);    //Make it stay on top
 
                     JPanel askDonePan = new JPanel();
                     // OK Button and Listener

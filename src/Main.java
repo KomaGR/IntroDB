@@ -7,11 +7,11 @@ public class Main {
     static mainFrame frame;
     static dataPort dataPort = new dataPort();
     private static connectionManager sql_manager;
-    private static String conn_username = "dbapp";
-    private static String password = "p!nkp@anther";
-    private static String serverName = "snf-795627.vm.okeanos.grnet.gr"; //"localhost";
-    private static String dbname = "rentexdb";
-    private static String portNumber = "3306";
+//    private static String conn_username = "dbapp";
+//    private static String password = "p!nkp@anther";
+//    private static String serverName = "snf-795627.vm.okeanos.grnet.gr"; //"localhost";
+//    private static String dbname = "rentexdb";
+//    private static String portNumber = "3306";
     public static ResultSet rs;
 
 
@@ -26,6 +26,7 @@ public class Main {
 
             //Create and set up the window.
             mainFrame mFrame = new mainFrame("CRUD9000");
+            frame = mFrame;
             mFrame.registerSQLManager(sql_manager);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
