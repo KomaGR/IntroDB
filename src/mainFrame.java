@@ -28,8 +28,33 @@ public class mainFrame extends JFrame {
         menuBar.add(mbitem1);
 
         Menu help = new Menu("Help");
+        MenuItem options = new MenuItem("Options");
         MenuItem usage = new MenuItem("Usage");
         MenuItem about = new MenuItem("About");
+
+        options.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFrame optionsFrame = new JFrame("Options");
+                JCheckBox autoCommit = new JCheckBox("Auto-Commite Changes");
+                autoCommit.setToolTipText("Be careful when setting this feature!");
+                autoCommit.addItemListener(new ItemListener() {
+                    @Override
+                    public void itemStateChanged(ItemEvent e) {
+                        if (autoCommit.isSelected()) {
+                            sql_manager.setAutoCommit(true);
+                        } else {
+                            sql_manager.setAutoCommit(false);
+                        }
+                    }
+                });
+            }
+        });
+
+
+
+
+        help.add(options);
         help.add(usage);
         help.add(about);
         menuBar.add(help);
@@ -111,9 +136,6 @@ public class mainFrame extends JFrame {
                 System.out.println("QBuffer was found empty. Closing.");
                 qOpResult = sql_manager.cancelQueries();
             }
-            /*if (qOpResult != pushedQueries) {
-                //TODO: Throw problems
-            }*/
             System.exit(0);
         }
 
@@ -122,6 +144,8 @@ public class mainFrame extends JFrame {
             System.out.println(actionEvent.getActionCommand());
             if (actionEvent.getActionCommand().equals("Save")) {
                 //TODO: Save instance
+                sql_manager.commitQueries();
+                refreshContent();
             } else if (actionEvent.getActionCommand().equals("About")){
                 //TODO: Open <<About>>
             } else if (actionEvent.getActionCommand().equals("Usage")){

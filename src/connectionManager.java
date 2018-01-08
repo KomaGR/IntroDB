@@ -13,6 +13,7 @@ public class connectionManager {
     private String portNumber = "3306";
     private queryBuffer qBuffer = new queryBuffer();
     private Connection connection = null;
+    private boolean autoCommit = false;
 
     public connectionManager(String userName, String password, String dbms, String serverName, String dbName, String portNumber) {
         this.userName = userName;
@@ -135,11 +136,11 @@ public class connectionManager {
     }
 
     public String[]  getOptions() {
-        //TODO: Pass correct view Options
         return new String[]{"Store", //Our Stores
                             "Employee",
                             "Customer",
-                            "Vehicle"};
+                            "Vehicle",
+                            "Statute"};
     }
 
     public ResultSet getSelect(String option) throws SQLException{
@@ -163,6 +164,11 @@ public class connectionManager {
                         "INNER JOIN Store S ON V.Store_id = S.Store_id;";
                 PreparedStatement stmt3 = connection.prepareStatement(q);
                 return stmt3.executeQuery();
+            case "Statute":
+                q = "SELECT * FROM Statute";
+                PreparedStatement stmt4 = connection.prepareStatement(q);
+                return stmt4.executeQuery();
+
         }
         return null;
     }
@@ -194,7 +200,8 @@ public class connectionManager {
                 stmt0.setString(4,values[4]);
                 stmt0.setString(5,values[0]);
 //                System.out.println(stmt0.toString());
-                qBuffer.add(stmt0);
+                if (autoCommit) stmt0.executeUpdate();
+                else qBuffer.add(stmt0);
 //                response = stmt0.executeUpdate();   //TODO: Enqueue instead of execute
 //                System.out.println(response);
                 return;
@@ -211,7 +218,8 @@ public class connectionManager {
                 stmt1.setString(7,values[7]);
                 stmt1.setString(8,values[8]);
                 stmt1.setString(9,values[0]);
-                qBuffer.add(stmt1);
+                if (autoCommit) stmt1.executeUpdate();
+                else qBuffer.add(stmt1);
 //                response = stmt1.executeUpdate();   //TODO: Enqueue instead of execute
 //                System.out.println(response);
                 return;
@@ -233,7 +241,8 @@ public class connectionManager {
                 stmt2.setString(12,values[12]);
                 stmt2.setString(13,values[13]);
                 stmt2.setString(14,values[0]);
-                qBuffer.add(stmt2);
+                if (autoCommit) stmt2.executeUpdate();
+                else qBuffer.add(stmt2);
 //                response = stmt2.executeUpdate();   //TODO: Enqueue instead of execute
 //                System.out.println(response);
                 return;
@@ -243,5 +252,132 @@ public class connectionManager {
     }
 
 
+    public int getPKCol(String tableName) {
+        switch (tableName) {
+            case "Store":
+                return 0;
+            case "Employee":
+                return 0;
+            case "Customer":
+                return 0;
+            case "Vehicle":
+                return 0;
+            case "Reserves":
+                return 1;
+
+        }
+        return -1;
+    }
+
+    public void deleteRow(String tableName, Object valueAt) throws SQLException {
+        String q = null;
+        switch (tableName) {
+            case "Store":
+                q = "DELETE FROM Store WHERE Store_id = ?";
+                PreparedStatement stmt0 = connection.prepareStatement(q);
+                stmt0.setString(1,valueAt.toString());
+                if (autoCommit) stmt0.executeUpdate();
+                else qBuffer.add(stmt0);
+                return;
+            case "Employee":
+                q = "DELETE FROM Employee WHERE IRS_NUMBER = ?";
+                PreparedStatement stmt1 = connection.prepareStatement(q);
+                stmt1.setString(1,valueAt.toString());
+                if (autoCommit) stmt1.executeUpdate();
+                else qBuffer.add(stmt1);
+                return;
+            case "Customer":
+                q = "DELETE FROM Customer WHERE Customer_id = ?";
+                PreparedStatement stmt2 = connection.prepareStatement(q);
+                stmt2.setString(1,valueAt.toString());
+                if (autoCommit) stmt2.executeUpdate();
+                else qBuffer.add(stmt2);
+                return;
+            case "Vehicle":
+                q = "";
+                PreparedStatement stmt3 = connection.prepareStatement(q);
+                if (autoCommit) stmt3.executeUpdate();
+                else qBuffer.add(stmt3);
+        }
+    }
+
+    public void insertRow(String tableName, String[] values) throws SQLException {
+        String q = null;
+        switch (tableName) {
+            case "Store":
+                q = "INSERT INTO Store(Store_id,Street,Street_Number,Postal_Code,City) VALUES (NULL,?,?,?,?)";
+                PreparedStatement stmt0 = connection.prepareStatement(q);
+                stmt0.setString(1,values[1]);
+                stmt0.setString(2,values[2]);
+                stmt0.setString(3,values[3]);
+                stmt0.setString(4,values[4]);
+                if (autoCommit) stmt0.executeUpdate();
+                else qBuffer.add(stmt0);
+                return;
+            case "Employee":
+                q = "INSERT INTO Employee(IRS_NUMBER, Social_Security_Number, Driver_License, " +
+                        "First_Name, Last_Name, Street, Street_Number, Postal_Code, City) VALUES (?,?,?,?,?,?,?,?,?)";
+
+                PreparedStatement stmt1 = connection.prepareStatement(q);
+                stmt1.setString(1,values[0]);
+                stmt1.setString(2,values[1]);
+                stmt1.setString(3,values[2]);
+                stmt1.setString(4,values[3]);
+                stmt1.setString(5,values[4]);
+                stmt1.setString(6,values[5]);
+                stmt1.setString(7,values[6]);
+                stmt1.setString(8,values[7]);
+                stmt1.setString(9,values[8]);
+                if (autoCommit) stmt1.executeUpdate();
+                else qBuffer.add(stmt1);
+                return;
+            case "Customer":
+                q = "INSERT INTO Customer(Customer_id, IRS_Number, Social_Security_Number, Last_Name, First_Name, " +
+                        "Driver_License, First_Registration, City, Postal_Code, Street, Street_Number) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+                PreparedStatement stmt2 = connection.prepareStatement(q);
+                stmt2.setString(1,values[0]);
+                stmt2.setString(2,values[1]);
+                stmt2.setString(3,values[2]);
+                stmt2.setString(4,values[3]);
+                stmt2.setString(5,values[4]);
+                stmt2.setString(6,values[5]);
+                stmt2.setString(7,values[6]);
+                stmt2.setString(8,values[7]);
+                stmt2.setString(9,values[8]);
+                stmt2.setString(10,values[9]);
+                stmt2.setString(11,values[10]);
+                if (autoCommit) stmt2.executeUpdate();
+                else qBuffer.add(stmt2);
+                return;
+            case "Vehicle":
+                q = "";
+                PreparedStatement stmt3 = connection.prepareStatement(q);
+                if (autoCommit) stmt3.executeUpdate();
+                else qBuffer.add(stmt3);
+        }
+    }
+
+    public boolean pkSuppliedByUser(String tableName) {
+        switch (tableName) {
+            case "Store":
+                return false;
+            case "Employee":
+                return true;    //It's IRS
+            case "Customer":
+                return false;
+            case "Vehicle":
+                return true;    //It's License plate
+            case "Reserves":
+                return true;    //It's Start Date
+
+        }
+        return false;
+    }
+
+    public void setAutoCommit(boolean b) {
+        this.autoCommit = b;
+
+    }
 }
+
 
