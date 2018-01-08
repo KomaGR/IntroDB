@@ -1,10 +1,13 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class mainFrame extends JFrame {
         private connectionManager sql_manager;
+        tablePanel data  = null;
+        JScrollPane scrollPane = null;
 
     // Constructor
 
@@ -40,18 +43,34 @@ public class mainFrame extends JFrame {
         about.addActionListener(mwl);
 
         tablePanel contentPane = new tablePanel(Main.rs, sql_manager);
+        data = contentPane;
         contentPane.registerParent(this);
         contentPane.setOpaque(true); //content panes must be opaque
 
-        controlPanel cPanel = new controlPanel(sql_manager);
+        controlPanel cPanel = new controlPanel(sql_manager,this);
 
         Container cont = this.getContentPane();
         cont.add(cPanel,BorderLayout.PAGE_START);
+        this.scrollPane = contentPane.getScrollPane();
         cont.add(contentPane.getScrollPane(),BorderLayout.CENTER);
 
         this.addWindowListener(mwl);
         pack();
 
+    }
+
+    public void changeContent(ResultSet rs) {
+        try {
+            tablePanel newContent = new tablePanel(rs, sql_manager);
+            remove(scrollPane);
+            System.out.println("Try to change content pls");
+            this.getContentPane().add(newContent.getScrollPane(),BorderLayout.CENTER);
+            data = newContent;
+            scrollPane = newContent.getScrollPane();
+            SwingUtilities.updateComponentTreeUI(this);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public void registerSQLManager(connectionManager sql_manager) {

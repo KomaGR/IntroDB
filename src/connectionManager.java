@@ -1,3 +1,4 @@
+import javax.swing.plaf.nimbus.State;
 import java.sql.*;
 import java.util.Properties;
 
@@ -25,10 +26,6 @@ public class connectionManager {
     public connectionManager() {
     }
 
-    public String[]  getOptions() {
-        //TODO: Pass correct view Options
-        return new String[]{"Mumbo","Jumbo","Dumbo","Django"};
-    }
 
     public Connection getConnection() throws SQLException {
 
@@ -116,6 +113,37 @@ public class connectionManager {
             count++;
         }
         return count;
+    }
+
+    public String[]  getOptions() {
+        //TODO: Pass correct view Options
+        return new String[]{"Stores", //Our Stores
+                            "Employees",
+                            "Customers",
+                            "Vehicles"};
+    }
+
+    public ResultSet getSelect(String option) throws SQLException{
+        String q = null;
+        switch (option) {
+            case "Stores":
+                q = "SELECT * FROM Store";
+                PreparedStatement stmt0 = connection.prepareStatement(q);
+                return stmt0.executeQuery();
+            case "Employees":
+                q = "SELECT * FROM Employee";
+                PreparedStatement stmt1 = connection.prepareStatement(q);
+                return stmt1.executeQuery();
+            case "Customers":
+                q = "SELECT * FROM Customer";
+                PreparedStatement stmt2 = connection.prepareStatement(q);
+                return stmt2.executeQuery();
+            case "Vehicles":
+                q = "SELECT * FROM Vehicle";
+                PreparedStatement stmt3 = connection.prepareStatement(q);
+                return stmt3.executeQuery();
+        }
+        return null;
     }
 
 
