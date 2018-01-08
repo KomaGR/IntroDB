@@ -1,6 +1,8 @@
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.ResultSet;
@@ -28,89 +30,87 @@ public class tablePanel extends JPanel implements ActionListener,TableModelListe
         super(new BorderLayout());
         setSql_manager(sql_manager);
 
-
         //Get data ready to display
         JTable resultTable = changeTableData(rs);
         String[] columnNames = dataPort.getColumnNames(rs);
         Vector<String[]> data = dataPort.getData(rs);
-//
-//        resultTable.setAutoCreateRowSorter(true);
-//        resultTable.setPreferredScrollableViewportSize(new Dimension(900, 500));
-//        resultTable.setFillsViewportHeight(false);
-//        resultTable.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mousePressed(MouseEvent mouseEvent) {
-//                JTable table = (JTable) mouseEvent.getSource();
-//                Point point = mouseEvent.getPoint();
-//                int row = table.rowAtPoint(point);
-//                row = table.convertRowIndexToModel(row);
-//                if (mouseEvent.getClickCount() == 2) {
-//                    //TODO: Case of no allowed edit?
-//                    System.out.println("Double click on row " + Integer.toString(row+1));
-//                    JForm editForm = new JForm(columnNames,getRowAt(resultTable,row,columnNames.length));
-//                    JFrame popUpFrame = new JFrame("Edit row " + row);
-//                    popUpFrame.setLayout(new FlowLayout());
-//                    popUpFrame.add(editForm);
-//                    popUpFrame.setLocation(mouseEvent.getLocationOnScreen());   //set pop up location
-//                    popUpFrame.setAlwaysOnTop(true);    //Make it stay on top
-//
-//                    JPanel askDonePan = new JPanel();
-//                    // OK Button and Listener
-//                    JButton okButton = new JButton("OK");
-//                    okButton.addMouseListener(new MouseAdapter() {
-//                        @Override
-//                        public void mouseClicked(MouseEvent mouseEvent) {
-//                            super.mouseClicked(mouseEvent);
-//                            System.out.println("Enqueue changes");
-//                            //Close window and enqueue changes
-//                            popUpFrame.dispatchEvent(new WindowEvent(popUpFrame, WindowEvent.WINDOW_CLOSING));
-//                            String[] editedFields = editForm.getTextFields();
-//                            if (editedFields != null) {
-//                                //enqueue change
-//                                String query = "UPDATE " + " "; //TODO: Find out where table name is
-//                                sql_manager.getqBuffer().add(query);
-//
-//                            }
-//                        }
-//                    });
-//                    askDonePan.add(okButton);
-//                    // Cancel button and onClick listener for window closing
-//                    JButton cancelButton = new JButton("Cancel");
-//                    cancelButton.addMouseListener(new MouseAdapter() {
-//                        @Override
-//                        public void mouseClicked(MouseEvent mouseEvent) {
-//                            super.mouseClicked(mouseEvent);
-//                            System.out.println("Discard changes");
-//                            popUpFrame.dispatchEvent(new WindowEvent(popUpFrame, WindowEvent.WINDOW_CLOSING));
-//                        }
-//                    });
-//                    askDonePan.add(cancelButton);
-//
-//                    popUpFrame.add(askDonePan);
-//
-//                    popUpFrame.setSize(new Dimension(300,columnNames.length*40+30));
-//                    popUpFrame.setVisible(true);
-//                    popUpFrame.requestFocus();
-//                    //TODO: Get changes;
-//                }
-//            }
-//        });
+        /*
+
+        resultTable.setAutoCreateRowSorter(true);
+        resultTable.setPreferredScrollableViewportSize(new Dimension(900, 500));
+        resultTable.setFillsViewportHeight(false);
+        resultTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent mouseEvent) {
+                JTable table = (JTable) mouseEvent.getSource();
+                Point point = mouseEvent.getPoint();
+                int row = table.rowAtPoint(point);
+                row = table.convertRowIndexToModel(row);
+                if (mouseEvent.getClickCount() == 2) {
+                    //TODO: Case of no allowed edit?
+                    System.out.println("Double click on row " + Integer.toString(row+1));
+                    JForm editForm = new JForm(columnNames,getRowAt(resultTable,row,columnNames.length));
+                    JFrame popUpFrame = new JFrame("Edit row " + row);
+                    popUpFrame.setLayout(new FlowLayout());
+                    popUpFrame.add(editForm);
+                    popUpFrame.setLocation(mouseEvent.getLocationOnScreen());   //set pop up location
+                    popUpFrame.setAlwaysOnTop(true);    //Make it stay on top
+
+                    JPanel askDonePan = new JPanel();
+                    // OK Button and Listener
+                    JButton okButton = new JButton("OK");
+                    okButton.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mouseClicked(MouseEvent mouseEvent) {
+                            super.mouseClicked(mouseEvent);
+                            System.out.println("Enqueue changes");
+                            //Close window and enqueue changes
+                            popUpFrame.dispatchEvent(new WindowEvent(popUpFrame, WindowEvent.WINDOW_CLOSING));
+                            String[] editedFields = editForm.getTextFields();
+                            if (editedFields != null) {
+                                //enqueue change
+                                String query = "UPDATE " + " "; //TODO: Find out where table name is
+                                sql_manager.getqBuffer().add(query);
+
+                            }
+                        }
+                    });
+                    askDonePan.add(okButton);
+                    // Cancel button and onClick listener for window closing
+                    JButton cancelButton = new JButton("Cancel");
+                    cancelButton.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mouseClicked(MouseEvent mouseEvent) {
+                            super.mouseClicked(mouseEvent);
+                            System.out.println("Discard changes");
+                            popUpFrame.dispatchEvent(new WindowEvent(popUpFrame, WindowEvent.WINDOW_CLOSING));
+                        }
+                    });
+                    askDonePan.add(cancelButton);
+
+                    popUpFrame.add(askDonePan);
+
+                    popUpFrame.setSize(new Dimension(300,columnNames.length*40+30));
+                    popUpFrame.setVisible(true);
+                    popUpFrame.requestFocus();
+                    //TODO: Get changes;
+                }
+            }
+        });
 
 
-        //Create the scroll pane and add the table to it.
-//        scrollPane = new JScrollPane(resultTable);
-        //Add the scroll pane to this panel.
-//        add(scrollPane);
-        //Create and set up the content pane.
+//        Create the scroll pane and add the table to it.
+        scrollPane = new JScrollPane(resultTable);
+//        Add the scroll pane to this panel.
+        add(scrollPane);
+//        Create and set up the content pane.*/
 
     }
     private String[] getRowAt(JTable table, int row, int colNumber) {
-
         String[] result = new String[colNumber];
         for (int i = 0; i < colNumber; i++) {
             result[i] = table.getModel().getValueAt(row, i).toString();
         }
-
         return result;
     }
 
@@ -131,10 +131,61 @@ public class tablePanel extends JPanel implements ActionListener,TableModelListe
 
         JTable resultTable = new JTable(dataPort.toObjectArray(data),dataPort.getColumnNames(rs)) {
             private static final long serialVersionUID = 1L;
+            private Class editingClass;
             //Override editability
             public boolean isCellEditable(int row, int column) {
                 return false;
-            };
+            }
+
+            //Implement table cell tool tips. (for coolness)
+            @Override
+            public String getToolTipText(MouseEvent e) {
+                String tip = null;
+                java.awt.Point p = e.getPoint();
+                int rowIndex = rowAtPoint(p);
+                int colIndex = columnAtPoint(p);
+
+                try {
+                    tip = getValueAt(rowIndex, colIndex).toString();
+                } catch (RuntimeException e1) {
+                    System.out.println(e1.getMessage());
+                }
+
+                return tip;
+            }
+
+            @Override
+            public TableCellRenderer getCellRenderer(int row, int column) {
+                editingClass = null;
+                int modelColumn = convertColumnIndexToModel(column);
+                if (modelColumn == 1) {
+                    Class rowClass = getModel().getValueAt(row, modelColumn).getClass();
+                    return getDefaultRenderer(rowClass);
+                } else {
+                    return super.getCellRenderer(row, column);
+                }
+            }
+
+            @Override
+            public TableCellEditor getCellEditor(int row, int column) {
+                editingClass = null;
+                int modelColumn = convertColumnIndexToModel(column);
+                if (modelColumn == 1) {
+                    editingClass = getModel().getValueAt(row, modelColumn).getClass();
+                    return getDefaultEditor(editingClass);
+                } else {
+                    return super.getCellEditor(row, column);
+                }
+            }
+            //  This method is also invoked by the editor when the value in the editor
+            //  component is saved in the TableModel. The class was saved when the
+            //  editor was invoked so the proper class can be created.
+            @Override
+            public Class<?> getColumnClass(int column) {
+                return editingClass != null ? editingClass : super.getColumnClass(column);
+            }
+
+
         };
 
         resultTable.setAutoCreateRowSorter(true);
@@ -150,6 +201,7 @@ public class tablePanel extends JPanel implements ActionListener,TableModelListe
                 System.out.println(row);
                 row = table.convertRowIndexToModel(row);
                 System.out.println(row);
+                System.out.println(table.getValueAt(row,table.columnAtPoint(point)).getClass());
                 if (mouseEvent.getClickCount() == 2) {
                     //TODO: Case of no allowed edit?
                     System.out.println("Double click on row " + Integer.toString(row+1));

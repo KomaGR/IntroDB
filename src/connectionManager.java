@@ -148,6 +148,7 @@ public class connectionManager {
 
     public void updateTable(String table, String[] values) throws SQLException {
         String q = null;
+        int response;
         switch (table) {
             case "Store":
                 q = "UPDATE Store SET Street = ?, Street_Number = ?, Postal_Code = ?, City = ? WHERE Store_id = ?";
@@ -157,10 +158,48 @@ public class connectionManager {
                 stmt0.setString(3,values[3]);
                 stmt0.setString(4,values[4]);
                 stmt0.setString(5,values[0]);
-                int response = stmt0.executeUpdate();   //TODO: Enqueue instead of execute
-
+                response = stmt0.executeUpdate();   //TODO: Enqueue instead of execute
                 System.out.println(response);
+            case "Employee":
+                q = "UPDATE Employee SET Social_Security_Number = ?, Driver_License = ?, First_Name = ?, Last_Name = ?, Street = ?, " +
+                        "Street_Number = ?, Postal_Code = ?, City = ? WHERE IRS_NUMBER = ?";
+                PreparedStatement stmt1 = connection.prepareStatement(q);
+                stmt1.setString(1,values[1]);
+                stmt1.setString(2,values[2]);
+                stmt1.setString(3,values[3]);
+                stmt1.setString(4,values[4]);
+                stmt1.setString(5,values[5]);
+                stmt1.setString(6,values[6]);
+                stmt1.setString(7,values[7]);
+                stmt1.setString(8,values[8]);
+                stmt1.setString(9,values[0]);
+                response = stmt1.executeUpdate();   //TODO: Enqueue instead of execute
+                System.out.println(response);
+            case "Vehicle":
+                q = "UPDATE Vehicle SET Model = ?, Type = ?, Year = ?, Kilometers = ?, Cylinder_Capacity = ?, Horse_Power = ?, " +
+                        "Damages = ?, Malfunctions = ?, Next_Service = ?, Insurance_Exp_Date = ?, Last_Service = ?, Store_id = ?, Make = ? WHERE License_Plate = ?";
+                PreparedStatement stmt2 = connection.prepareStatement(q);
+                stmt2.setString(1,values[1]);
+                stmt2.setString(2,values[2]);
+                stmt2.setString(3,values[3]);
+                stmt2.setString(4,values[4]);
+                stmt2.setString(5,values[5]);
+                stmt2.setString(6,values[6]);
+                stmt2.setString(7,values[7]);
+                stmt2.setString(8,values[8]);
+                stmt2.setString(9,values[9]);
+                stmt2.setString(10,values[10]);
+                stmt2.setString(11,values[11]);
+                stmt2.setString(12,values[12]);
+                stmt2.setString(13,values[13]);
+                stmt2.setString(14,values[0]);
+                response = stmt2.executeUpdate();   //TODO: Enqueue instead of execute
+                System.out.println(response);
+
+
+
         }
+
     }
 
 

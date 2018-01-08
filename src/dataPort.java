@@ -38,11 +38,15 @@ public class dataPort {
         return null;
     }
     public Object[][] toObjectArray(Vector<String[]> vec) {
-        String[][] strArrArr = new String[vec.size()][vec.firstElement().length];
+        Object[][] strArrArr = new Object[vec.size()][vec.firstElement().length];
         for (int i = 0; i < vec.size(); i++) {
-            String[] strArr = vec.elementAt(i);
-            for (int j = 0; j < strArr.length; j++) {
-                strArrArr[i][j] = strArr[j];
+            String[] elemLine = vec.elementAt(i);
+            for (int j = 0; j < elemLine.length; j++) {
+                try {
+                    strArrArr[i][j] = Integer.parseInt(elemLine[j]);
+                } catch (NumberFormatException e) {
+                    strArrArr[i][j] = elemLine[j];
+                }
             }
         }
         return strArrArr;
