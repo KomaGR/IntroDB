@@ -86,12 +86,31 @@ public class connectionManager {
             System.out.println(e.getMessage());
         }
         String query = null;
+        Object mayBeQuery = null;
         int count = 0;
         while (!qBuffer.isEmpty()) {
             try {
-                query = qBuffer.pop();
-                assert statement != null;
-                statement.addBatch(query);
+                mayBeQuery = qBuffer.pop();
+                if (mayBeQuery.getClass().equals(String.class)) {
+                    //If it's a string add it to batch
+                    query = mayBeQuery.toString();
+                    assert statement != null;
+                    statement.addBatch(query);
+                } else {
+                    //If it's a prepared statement execute it;
+                    PreparedStatement stmt = (PreparedStatement) mayBeQuery;
+                    try{
+                        stmt.executeQuery();
+                    } catch (SQLException e1) {
+                        try {
+                            stmt.executeUpdate();
+                        } catch (SQLException e2) {
+                            System.out.println(e2.getMessage());
+                        } finally {
+                            System.out.println("Update Query processed.");
+                        }
+                    }
+                }
             } catch (NullPointerException | SQLException e) {
                 System.out.println(e.getMessage());
             }
@@ -117,33 +136,49 @@ public class connectionManager {
 
     public String[]  getOptions() {
         //TODO: Pass correct view Options
-        return new String[]{"Stores", //Our Stores
-                            "Employees",
-                            "Customers",
-                            "Vehicles"};
+        return new String[]{"Store", //Our Stores
+                            "Employee",
+                            "Customer",
+                            "Vehicle"};
     }
 
     public ResultSet getSelect(String option) throws SQLException{
         String q = null;
         switch (option) {
-            case "Stores":
+            case "Store":
                 q = "SELECT * FROM Store";
                 PreparedStatement stmt0 = connection.prepareStatement(q);
                 return stmt0.executeQuery();
-            case "Employees":
+            case "Employee":
                 q = "SELECT * FROM Employee";
                 PreparedStatement stmt1 = connection.prepareStatement(q);
                 return stmt1.executeQuery();
-            case "Customers":
+            case "Customer":
                 q = "SELECT * FROM Customer";
                 PreparedStatement stmt2 = connection.prepareStatement(q);
                 return stmt2.executeQuery();
-            case "Vehicles":
-                q = "SELECT * FROM Vehicle";
+            case "Vehicle":
+                q = "SELECT V.License_Plate, V.Model, V.Type, V.Make, V.Year, V.Kilometers, V.Cylinder_Capacity, V.Horse_Power, V.Damages, V.Malfunctions, V.Next_Service, V.Insurance_Exp_Date, V.Last_Service, S.City\n" +
+                        "FROM Vehicle V\n" +
+                        "INNER JOIN Store S ON V.Store_id = S.Store_id;";
                 PreparedStatement stmt3 = connection.prepareStatement(q);
                 return stmt3.executeQuery();
         }
         return null;
+    }
+
+    public boolean editable(String table) {
+        switch (table) {
+            case "Store":
+                return true;
+            case "Employee":
+                return true;
+            case "Customer":
+                return false;
+            case "Vehicle":
+                return false;
+        }
+        return false;
     }
 
     public void updateTable(String table, String[] values) throws SQLException {
@@ -158,8 +193,11 @@ public class connectionManager {
                 stmt0.setString(3,values[3]);
                 stmt0.setString(4,values[4]);
                 stmt0.setString(5,values[0]);
-                response = stmt0.executeUpdate();   //TODO: Enqueue instead of execute
-                System.out.println(response);
+//                System.out.println(stmt0.toString());
+                qBuffer.add(stmt0);
+//                response = stmt0.executeUpdate();   //TODO: Enqueue instead of execute
+//                System.out.println(response);
+                return;
             case "Employee":
                 q = "UPDATE Employee SET Social_Security_Number = ?, Driver_License = ?, First_Name = ?, Last_Name = ?, Street = ?, " +
                         "Street_Number = ?, Postal_Code = ?, City = ? WHERE IRS_NUMBER = ?";
@@ -173,8 +211,10 @@ public class connectionManager {
                 stmt1.setString(7,values[7]);
                 stmt1.setString(8,values[8]);
                 stmt1.setString(9,values[0]);
-                response = stmt1.executeUpdate();   //TODO: Enqueue instead of execute
-                System.out.println(response);
+                qBuffer.add(stmt1);
+//                response = stmt1.executeUpdate();   //TODO: Enqueue instead of execute
+//                System.out.println(response);
+                return;
             case "Vehicle":
                 q = "UPDATE Vehicle SET Model = ?, Type = ?, Year = ?, Kilometers = ?, Cylinder_Capacity = ?, Horse_Power = ?, " +
                         "Damages = ?, Malfunctions = ?, Next_Service = ?, Insurance_Exp_Date = ?, Last_Service = ?, Store_id = ?, Make = ? WHERE License_Plate = ?";
@@ -193,10 +233,10 @@ public class connectionManager {
                 stmt2.setString(12,values[12]);
                 stmt2.setString(13,values[13]);
                 stmt2.setString(14,values[0]);
-                response = stmt2.executeUpdate();   //TODO: Enqueue instead of execute
-                System.out.println(response);
-
-
+                qBuffer.add(stmt2);
+//                response = stmt2.executeUpdate();   //TODO: Enqueue instead of execute
+//                System.out.println(response);
+                return;
 
         }
 

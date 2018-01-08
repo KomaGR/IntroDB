@@ -29,81 +29,10 @@ public class tablePanel extends JPanel implements ActionListener,TableModelListe
 //        super(new GridLayout(1,0));
         super(new BorderLayout());
         setSql_manager(sql_manager);
-
         //Get data ready to display
         JTable resultTable = changeTableData(rs);
         String[] columnNames = dataPort.getColumnNames(rs);
         Vector<String[]> data = dataPort.getData(rs);
-        /*
-
-        resultTable.setAutoCreateRowSorter(true);
-        resultTable.setPreferredScrollableViewportSize(new Dimension(900, 500));
-        resultTable.setFillsViewportHeight(false);
-        resultTable.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent mouseEvent) {
-                JTable table = (JTable) mouseEvent.getSource();
-                Point point = mouseEvent.getPoint();
-                int row = table.rowAtPoint(point);
-                row = table.convertRowIndexToModel(row);
-                if (mouseEvent.getClickCount() == 2) {
-                    //TODO: Case of no allowed edit?
-                    System.out.println("Double click on row " + Integer.toString(row+1));
-                    JForm editForm = new JForm(columnNames,getRowAt(resultTable,row,columnNames.length));
-                    JFrame popUpFrame = new JFrame("Edit row " + row);
-                    popUpFrame.setLayout(new FlowLayout());
-                    popUpFrame.add(editForm);
-                    popUpFrame.setLocation(mouseEvent.getLocationOnScreen());   //set pop up location
-                    popUpFrame.setAlwaysOnTop(true);    //Make it stay on top
-
-                    JPanel askDonePan = new JPanel();
-                    // OK Button and Listener
-                    JButton okButton = new JButton("OK");
-                    okButton.addMouseListener(new MouseAdapter() {
-                        @Override
-                        public void mouseClicked(MouseEvent mouseEvent) {
-                            super.mouseClicked(mouseEvent);
-                            System.out.println("Enqueue changes");
-                            //Close window and enqueue changes
-                            popUpFrame.dispatchEvent(new WindowEvent(popUpFrame, WindowEvent.WINDOW_CLOSING));
-                            String[] editedFields = editForm.getTextFields();
-                            if (editedFields != null) {
-                                //enqueue change
-                                String query = "UPDATE " + " "; //TODO: Find out where table name is
-                                sql_manager.getqBuffer().add(query);
-
-                            }
-                        }
-                    });
-                    askDonePan.add(okButton);
-                    // Cancel button and onClick listener for window closing
-                    JButton cancelButton = new JButton("Cancel");
-                    cancelButton.addMouseListener(new MouseAdapter() {
-                        @Override
-                        public void mouseClicked(MouseEvent mouseEvent) {
-                            super.mouseClicked(mouseEvent);
-                            System.out.println("Discard changes");
-                            popUpFrame.dispatchEvent(new WindowEvent(popUpFrame, WindowEvent.WINDOW_CLOSING));
-                        }
-                    });
-                    askDonePan.add(cancelButton);
-
-                    popUpFrame.add(askDonePan);
-
-                    popUpFrame.setSize(new Dimension(300,columnNames.length*40+30));
-                    popUpFrame.setVisible(true);
-                    popUpFrame.requestFocus();
-                    //TODO: Get changes;
-                }
-            }
-        });
-
-
-//        Create the scroll pane and add the table to it.
-        scrollPane = new JScrollPane(resultTable);
-//        Add the scroll pane to this panel.
-        add(scrollPane);
-//        Create and set up the content pane.*/
 
     }
     private String[] getRowAt(JTable table, int row, int colNumber) {
@@ -203,56 +132,60 @@ public class tablePanel extends JPanel implements ActionListener,TableModelListe
                 System.out.println(row);
                 System.out.println(table.getValueAt(row,table.columnAtPoint(point)).getClass());
                 if (mouseEvent.getClickCount() == 2) {
-                    //TODO: Case of no allowed edit?
-                    System.out.println("Double click on row " + Integer.toString(row+1));
-                    JForm editForm = new JForm(columnNames,getRowAt(resultTable,row,columnNames.length));
-                    JFrame popUpFrame = new JFrame("Edit row " + row);
-                    popUpFrame.setLayout(new FlowLayout());
-                    popUpFrame.add(editForm);
-                    popUpFrame.setLocation(mouseEvent.getLocationOnScreen());   //set pop up location
-                    popUpFrame.setAlwaysOnTop(true);    //Make it stay on top
+                    if (sql_manager.editable(tableName)) {
+                        System.out.println("Double click on row " + Integer.toString(row + 1));
+                        JForm editForm = new JForm(columnNames, getRowAt(resultTable, row, columnNames.length));
+                        JFrame popUpFrame = new JFrame("Edit row " + row);
+                        popUpFrame.setLayout(new FlowLayout());
+                        popUpFrame.add(editForm);
+                        popUpFrame.setLocation(mouseEvent.getLocationOnScreen());   //set pop up location
+                        popUpFrame.setAlwaysOnTop(true);    //Make it stay on top
 
-                    JPanel askDonePan = new JPanel();
-                    // OK Button and Listener
-                    JButton okButton = new JButton("OK");
-                    okButton.addMouseListener(new MouseAdapter() {
-                        @Override
-                        public void mouseClicked(MouseEvent mouseEvent) {
-                            super.mouseClicked(mouseEvent);
-                            System.out.println("Enqueue changes");
-                            //Close window and enqueue changes
-                            popUpFrame.dispatchEvent(new WindowEvent(popUpFrame, WindowEvent.WINDOW_CLOSING));
-                            String[] editedFields = editForm.getTextFields();
-                            if (editedFields != null) {
-                                //enqueue change
-                                try {
-                                    sql_manager.updateTable(tableName,editedFields);
+                        JPanel askDonePan = new JPanel();
+                        // OK Button and Listener
+                        JButton okButton = new JButton("OK");
+                        okButton.addMouseListener(new MouseAdapter() {
+                            @Override
+                            public void mouseClicked(MouseEvent mouseEvent) {
+                                super.mouseClicked(mouseEvent);
+                                System.out.println("Enqueue changes");
+                                //Close window and enqueue changes
+                                popUpFrame.dispatchEvent(new WindowEvent(popUpFrame, WindowEvent.WINDOW_CLOSING));
+                                String[] editedFields = editForm.getTextFields();
+                                if (editedFields != null) {
+                                    //enqueue change
+                                    try {
+                                        sql_manager.updateTable(tableName, editedFields);
 //                                    sql_manager.getqBuffer().add(query);
-                                } catch (SQLException e) {
-                                    System.out.println(e.getMessage());
+                                    } catch (SQLException e) {
+                                        System.out.println(e.getMessage());
+                                    }
+
                                 }
-
                             }
-                        }
-                    });
-                    askDonePan.add(okButton);
-                    // Cancel button and onClick listener for window closing
-                    JButton cancelButton = new JButton("Cancel");
-                    cancelButton.addMouseListener(new MouseAdapter() {
-                        @Override
-                        public void mouseClicked(MouseEvent mouseEvent) {
-                            super.mouseClicked(mouseEvent);
-                            System.out.println("Discard changes");
-                            popUpFrame.dispatchEvent(new WindowEvent(popUpFrame, WindowEvent.WINDOW_CLOSING));
-                        }
-                    });
-                    askDonePan.add(cancelButton);
+                        });
+                        askDonePan.add(okButton);
+                        // Cancel button and onClick listener for window closing
+                        JButton cancelButton = new JButton("Cancel");
+                        cancelButton.addMouseListener(new MouseAdapter() {
+                            @Override
+                            public void mouseClicked(MouseEvent mouseEvent) {
+                                super.mouseClicked(mouseEvent);
+                                System.out.println("Discard changes");
+                                popUpFrame.dispatchEvent(new WindowEvent(popUpFrame, WindowEvent.WINDOW_CLOSING));
+                            }
+                        });
+                        askDonePan.add(cancelButton);
 
-                    popUpFrame.add(askDonePan);
+                        popUpFrame.add(askDonePan);
 
-                    popUpFrame.setSize(new Dimension(300,columnNames.length*40+30));
-                    popUpFrame.setVisible(true);
-                    popUpFrame.requestFocus();
+                        popUpFrame.setSize(new Dimension(350, columnNames.length * 35 + 25));
+                        popUpFrame.setVisible(true);
+                        popUpFrame.requestFocus();
+                    } else {
+                        JOptionPane.showMessageDialog(resultTable,"The selected" +
+                                " table is not editable.","Invalid Action",JOptionPane.WARNING_MESSAGE);
+                    }
                     //TODO: Get changes;
                 }
             }

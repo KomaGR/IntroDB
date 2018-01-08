@@ -1,19 +1,21 @@
 import java.util.*;
 
-public class queryBuffer extends LinkedList<String> {
-    private String lastChange;
+public class queryBuffer extends LinkedList<Object> {
+    private Object lastChange = null;
 
-    public String undo() {
-        if (lastChange != null) {
+    public Object undo() {
+        if (lastChange == null) {
             lastChange = this.removeLast();
             return lastChange;
         } else return null;
     }
 
-    public String redo() {
-        this.add(lastChange);
-        String temp = lastChange;
-        lastChange = null;
-        return temp;
+    public Object redo() {
+        if (lastChange != null) {
+            this.add(lastChange);
+            Object temp = lastChange;
+            lastChange = null;
+            return temp;
+        } else return null;
     }
 }

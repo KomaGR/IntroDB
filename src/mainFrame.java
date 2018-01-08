@@ -7,6 +7,7 @@ import java.sql.SQLException;
 public class mainFrame extends JFrame {
         private connectionManager sql_manager;
         tablePanel data  = null;
+        controlPanel cPanel = null;
         JScrollPane scrollPane = null;
 
     // Constructor
@@ -47,7 +48,7 @@ public class mainFrame extends JFrame {
         contentPane.registerParent(this);
         contentPane.setOpaque(true); //content panes must be opaque
 
-        controlPanel cPanel = new controlPanel(sql_manager,this);
+        cPanel = new controlPanel(sql_manager,this);
 
         Container cont = this.getContentPane();
         cont.add(cPanel,BorderLayout.PAGE_START);
@@ -63,7 +64,7 @@ public class mainFrame extends JFrame {
         try {
             tablePanel newContent = new tablePanel(rs, sql_manager);
             remove(scrollPane);
-            System.out.println("Try to change content pls");
+            System.out.println("Content change.");
             this.getContentPane().add(newContent.getScrollPane(),BorderLayout.CENTER);
             data = newContent;
             scrollPane = newContent.getScrollPane();
@@ -75,6 +76,21 @@ public class mainFrame extends JFrame {
 
     public void registerSQLManager(connectionManager sql_manager) {
         this.sql_manager = sql_manager;
+    }
+
+    public void refreshContent() {
+        if (cPanel != null) {
+            try{
+                System.out.println("------ CONTENT REFRESH START -------");
+                String table = cPanel.currentTable;
+                System.out.println("\tCurrent Table: " + table);
+                ResultSet rs = sql_manager.getSelect(table);
+                this.changeContent(rs);
+                System.out.println("Refreshed content.");
+            }catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
     }
 
 

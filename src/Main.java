@@ -24,7 +24,7 @@ public class Main {
 
 //            rs = sql_manager.getClients("First_Name",true);
 
-            rs = sql_manager.getSelect("Stores");
+            rs = sql_manager.getSelect("Store");
             //Create and set up the window.
             mainFrame mFrame = new mainFrame("CRUD9000",sql_manager);
             frame = mFrame;
