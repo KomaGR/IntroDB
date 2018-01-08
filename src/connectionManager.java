@@ -146,6 +146,23 @@ public class connectionManager {
         return null;
     }
 
+    public void updateTable(String table, String[] values) throws SQLException {
+        String q = null;
+        switch (table) {
+            case "Store":
+                q = "UPDATE Store SET Street = ?, Street_Number = ?, Postal_Code = ?, City = ? WHERE Store_id = ?";
+                PreparedStatement stmt0 = connection.prepareStatement(q);
+                stmt0.setString(1,values[1]);
+                stmt0.setString(2,values[2]);
+                stmt0.setString(3,values[3]);
+                stmt0.setString(4,values[4]);
+                stmt0.setString(5,values[0]);
+                int response = stmt0.executeUpdate();   //TODO: Enqueue instead of execute
+
+                System.out.println(response);
+        }
+    }
+
 
 }
 

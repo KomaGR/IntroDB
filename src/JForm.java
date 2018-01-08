@@ -15,6 +15,7 @@ public class JForm extends JPanel {
             label.setLabelFor(textFields[i]);
             this.add(textFields[i]);
         }
+        textFields[0].setEditable(false);
         SpringUtilities.makeGrid(this,fields.length,2,6,6,6,6);
 
         System.out.println("I cri evritiem");
