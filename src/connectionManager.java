@@ -378,6 +378,10 @@ public class connectionManager {
         this.autoCommit = b;
 
     }
+
+    public boolean getAutoCommit() {
+        return autoCommit;
+    }
 }
 
 

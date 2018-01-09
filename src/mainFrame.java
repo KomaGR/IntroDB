@@ -17,26 +17,31 @@ public class mainFrame extends JFrame {
         setVisible(true);
         this.sql_manager = sql_manager;
         // create menu bar
-        MenuBar menuBar = new MenuBar();
+        JMenuBar menuBar = new JMenuBar();
         // Create menu
-        Menu mbitem1 = new Menu("File");
+        JMenu mbitem1 = new JMenu("File");
         // Create menu items
-        MenuItem item1 = new MenuItem("Save");
+        JMenuItem item1 = new JMenuItem("Save");
+
         // Add items to menus
         mbitem1.add(item1);
+
         // Add menus to menu bar
         menuBar.add(mbitem1);
 
-        Menu help = new Menu("Help");
-        MenuItem options = new MenuItem("Options");
-        MenuItem usage = new MenuItem("Usage");
-        MenuItem about = new MenuItem("About");
+        JMenu help = new JMenu("Help");
+        JMenuItem options = new JMenuItem("Options");
+        JMenuItem usage = new JMenuItem("Usage");
+        JMenuItem about = new JMenuItem("About");
 
         options.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFrame optionsFrame = new JFrame("Options");
-                JCheckBox autoCommit = new JCheckBox("Auto-Commite Changes");
+                JPanel optonsPanel = new JPanel(new SpringLayout());
+
+                JCheckBox autoCommit = new JCheckBox("Auto-Commit Changes");
+                autoCommit.setSelected(sql_manager.getAutoCommit());
                 autoCommit.setToolTipText("Be careful when setting this feature!");
                 autoCommit.addItemListener(new ItemListener() {
                     @Override
@@ -48,11 +53,17 @@ public class mainFrame extends JFrame {
                         }
                     }
                 });
+
+                optonsPanel.add(autoCommit);
+
+                optionsFrame.add(optonsPanel);
+                optionsFrame.setSize(new Dimension(300,200));
+                optionsFrame.setLocationRelativeTo(cPanel);
+                optionsFrame.requestFocus();
+                optionsFrame.setAlwaysOnTop(true);
+                optionsFrame.setVisible(true);
             }
         });
-
-
-
 
         help.add(options);
         help.add(usage);
@@ -60,7 +71,7 @@ public class mainFrame extends JFrame {
         menuBar.add(help);
 
         // Apply menu bar to top level container
-        this.setMenuBar(menuBar);
+        this.setJMenuBar(menuBar);
 
         //Action Listeners
         MyWindowListener mwl = new MyWindowListener();
