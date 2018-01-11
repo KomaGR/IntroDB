@@ -1,10 +1,11 @@
 import javax.swing.plaf.nimbus.State;
 import java.sql.*;
 import java.util.Properties;
-
+import java.util.Vector;
 
 
 public class connectionManager {
+    private dataPort dataPort = new dataPort();
     private String userName = "dbapp";
     private String password = "p!nkp@anther";
     private String dbms = "mysql";
@@ -140,7 +141,8 @@ public class connectionManager {
                             "Employee",
                             "Customer",
                             "Vehicle",
-                            "Statute"};
+                            "Rents",
+                            "Payments"};
     }
 
     public ResultSet getSelect(String option) throws SQLException{
@@ -155,7 +157,7 @@ public class connectionManager {
                 PreparedStatement stmt1 = connection.prepareStatement(q);
                 return stmt1.executeQuery();
             case "Customer":
-                q = "SELECT * FROM Customer";
+                q = "SELECT * FROM Customer ORDER BY Last_Name,First_Name ASC";
                 PreparedStatement stmt2 = connection.prepareStatement(q);
                 return stmt2.executeQuery();
             case "Vehicle":
@@ -168,7 +170,14 @@ public class connectionManager {
                 q = "SELECT * FROM Statute";
                 PreparedStatement stmt4 = connection.prepareStatement(q);
                 return stmt4.executeQuery();
-
+            case "Rents":
+                q = "SELECT * FROM Rents";
+                PreparedStatement stmt5 = connection.prepareStatement(q);
+                return stmt5.executeQuery();
+            case "Payments":
+                q = "SELECT * FROM Payment_Transaction";
+                PreparedStatement stmt6 = connection.prepareStatement(q);
+                return stmt6.executeQuery();
         }
         return null;
     }
@@ -176,15 +185,16 @@ public class connectionManager {
     public boolean editable(String table) {
         switch (table) {
             case "Store":
-                return true;
+                return false;
             case "Employee":
                 return true;
             case "Customer":
-                return false;
+                return true;
             case "Vehicle":
+                return true;
+            default:
                 return false;
         }
-        return false;
     }
 
     public void updateTable(String table, String[] values) throws SQLException {
@@ -246,7 +256,23 @@ public class connectionManager {
 //                response = stmt2.executeUpdate();   //TODO: Enqueue instead of execute
 //                System.out.println(response);
                 return;
-
+            case "Customer":
+                q = "UPDATE Customer SET IRS_Number = ?, Social_Security_Number = ?, First_Name = ?, Last_Name = ?, Driver_License = ?, First_Registration = ?, " +
+                        "City = ?, Postal_Code = ?, Street = ?, Street_Number = ? WHERE Customer_id = ?";
+                PreparedStatement stmt3 = connection.prepareStatement(q);
+                stmt3.setString(1,values[1]);
+                stmt3.setString(2,values[2]);
+                stmt3.setString(3,values[3]);
+                stmt3.setString(4,values[4]);
+                stmt3.setString(5,values[5]);
+                stmt3.setString(6,values[6]);
+                stmt3.setString(7,values[7]);
+                stmt3.setString(8,values[8]);
+                stmt3.setString(9,values[9]);
+                stmt3.setString(10,values[10]);
+                stmt3.setString(11,values[0]);
+                if (autoCommit) stmt3.executeUpdate();
+                else qBuffer.add(stmt3);
         }
 
     }
@@ -300,6 +326,7 @@ public class connectionManager {
                 else qBuffer.add(stmt3);
         }
     }
+
 
     public void insertRow(String tableName, String[] values) throws SQLException {
         String q = null;
@@ -381,6 +408,145 @@ public class connectionManager {
 
     public boolean getAutoCommit() {
         return autoCommit;
+    }
+
+    public ResultSet getRegisteredAt(Object valueAt) throws SQLException {
+        String storeName = valueAt.toString();
+        String q = "SELECT  Customer_id ,First_Name,City, First_Registration FROM Customer GROUP BY First_Name HAVING First_Registration LIKE ?";
+        PreparedStatement regstrdAt = connection.prepareStatement(q);
+        regstrdAt.setString(1,storeName);
+        return regstrdAt.executeQuery();
+    }
+
+    public String getPaymentAggregate() {
+        String q = "SELECT avg(Payment_Amount) FROM Payment_Transaction";
+        ResultSet rs = null;
+        try {
+            PreparedStatement agg = connection.prepareStatement(q);
+            rs = agg.executeQuery();
+            if (rs != null) {
+                Vector<String[]> reply = dataPort.getData(rs);
+                return reply.elementAt(0)[0];
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+    public ResultSet getFuelTypes() {
+        String q = "SELECT DISTINCT Fuel_Type FROM Fuel_Type ORDER BY Fuel_Type ASC;";
+        ResultSet rs = null;
+        try {
+            PreparedStatement agg = connection.prepareStatement(q);
+            rs = agg.executeQuery();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return rs;
+    }
+
+    public ResultSet showClientsPerCity() {
+        String q = "SELECT count(Customer_id), City FROM Customer GROUP BY City DESC;";
+        ResultSet rs = null;
+        try {
+            PreparedStatement agg = connection.prepareStatement(q);
+            rs = agg.executeQuery();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return rs;
+    }
+
+    public ResultSet getMinRentInfo() {
+        String q = "SELECT Model,Make,min(Payment_Amount) AS Minimum_Rent_Cost ,Store_id  FROM " +
+                "Vehicle INNER JOIN Payment_Transaction ON Vehicle.License_Plate =" +
+                " Payment_Transaction.Licence_Plate;";
+        ResultSet rs = null;
+        try {
+            PreparedStatement agg = connection.prepareStatement(q);
+            rs = agg.executeQuery();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return rs;
+    }
+
+    public ResultSet getClientStartLoc() {
+        String q = "SELECT Customer.First_Name, Customer.Last_Name,Rents.Start_location FROM Customer JOIN Rents" +
+                " ON Customer.Customer_id = Rents.Customer_id ORDER BY Customer.Last_Name;";
+        ResultSet rs = null;
+        try {
+            PreparedStatement agg = connection.prepareStatement(q);
+            rs = agg.executeQuery();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return rs;
+    }
+
+    public ResultSet getDamagedVehiclesAt(String city) {
+        String q = "Select V.License_Plate, V.damages, V.malfunctions, V.Store_id, S.City FROM Vehicle V INNER JOIN Store S ON V." +
+                "Store_id = S.Store_id WHERE S.City = ? AND MALFUNCTIONS IS NOT NULL OR DAMAGES IS NOT NULL;";
+        ResultSet rs = null;
+        try {
+            PreparedStatement agg = connection.prepareStatement(q);
+            agg.setString(1,city);
+            rs = agg.executeQuery();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return rs;
+    }
+
+    public ResultSet getPositions() {
+        String q = "SELECT Employee.First_Name,Employee.Last_Name ,Store_id,Position FROM Employee,Works " +
+                "WHERE Employee.IRS_Number = Works.IRS_NUMBER  ORDER BY  Position;";
+        ResultSet rs = null;
+        try {
+            PreparedStatement agg = connection.prepareStatement(q);
+            rs = agg.executeQuery();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return rs;
+    }
+    public ResultSet bestClients() {
+        String q = "SELECT Last_Name,First_Name,First_Registration FROM Customer  WHERE Customer_id " +
+                "IN (SELECT Rents.Customer_id FROM Rents WHERE Return_State = 'PERFECT') ORDER BY Last_Name";
+        ResultSet rs = null;
+        try {
+            PreparedStatement agg = connection.prepareStatement(q);
+            rs = agg.executeQuery();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return rs;
+    }
+
+    public ResultSet showPrepaid() {
+        String q = "SELECT  First_Name,Last_Name,City FROM Customer WHERE Customer_id IN (SELECT Customer_id FROM " +
+                "Reserves WHERE Paid = 'YES') ORDER BY Last_Name;";
+        ResultSet rs = null;
+        try {
+            PreparedStatement agg = connection.prepareStatement(q);
+            rs = agg.executeQuery();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return rs;
+    }
+    public ResultSet highSeasonRents() {
+    String q = "SELECT Start_location, Start_date FROM Rents WHERE Start_date " +
+            "BETWEEN '2017-05-01' AND '2017-10-01' GROUP BY Start_location;";
+    ResultSet rs = null;
+    try {
+        PreparedStatement agg = connection.prepareStatement(q);
+        rs = agg.executeQuery();
+    } catch (SQLException e) {
+        System.out.println(e.getMessage());
+    }
+    return rs;
     }
 }
 

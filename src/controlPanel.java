@@ -8,6 +8,18 @@ public class controlPanel extends JPanel {
     connectionManager sql_manager = null;
     mainFrame mFrame = null;
     String currentTable = "Store";
+    private JTextField editability;
+    private JComboBox<String> viewOption;
+
+    public void setNoSelectedOption() {
+        viewOption.setSelectedItem(null);
+        editability.setText("Not Editable");
+    }
+
+    public String getSelectedOption() {
+        if (viewOption.getSelectedItem() != null) return viewOption.getSelectedItem().toString();
+        else return null;
+    }
 
     public controlPanel(connectionManager sql_manager, mainFrame mainFrame) {
         super(new GridBagLayout());
@@ -22,7 +34,7 @@ public class controlPanel extends JPanel {
         // Editability text
         boolean edit = sql_manager.editable(currentTable);
         String canEdit = ( edit ? "Editable" : "Not Editable" );
-        JTextField editability = new JTextField(canEdit,7);
+        editability = new JTextField(canEdit,7);
         JButton commitButton = new JButton("COMMIT");
         commitButton.addActionListener(new ActionListener() {
             @Override
@@ -74,7 +86,7 @@ public class controlPanel extends JPanel {
         });
 
         // Table Selector
-        JComboBox<String> viewOption = new JComboBox<>(sql_manager.getOptions());
+        viewOption = new JComboBox<>(sql_manager.getOptions());
         viewOption.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent itemEvent) {
@@ -89,7 +101,7 @@ public class controlPanel extends JPanel {
                         String canEdit = (sql_manager.editable(currentTable) ? "Editable" : "Not Editable" );
                         System.out.println("It's " + canEdit);
                         editability.setText(canEdit);
-
+                        currentTable = selection;
                         mFrame.changeContent(rs);
                     } catch (SQLException e) {
                         System.out.println(e.getMessage());
@@ -137,5 +149,10 @@ public class controlPanel extends JPanel {
         constraints.anchor = GridBagConstraints.LINE_END;
         add(dropButton,constraints);
 
+    }
+
+    public void refresh(String newTable) {
+        currentTable = newTable;
+        editability.setText(sql_manager.editable(currentTable)? "Editable" : "Not Editable");
     }
 }

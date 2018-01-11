@@ -105,6 +105,7 @@ public class mainFrame extends JFrame {
             data = newContent;
             scrollPane = newContent.getScrollPane();
             SwingUtilities.updateComponentTreeUI(this);
+            cPanel.refresh(rs.getMetaData().getTableName(1));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }

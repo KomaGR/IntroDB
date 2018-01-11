@@ -10,6 +10,7 @@ import java.awt.event.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.NoSuchElementException;
 import java.util.Vector;
 
 public class tablePanel extends JPanel implements ActionListener,TableModelListener {
@@ -18,7 +19,7 @@ public class tablePanel extends JPanel implements ActionListener,TableModelListe
     private static mainFrame parentFrame = null;
     static connectionManager sql_manager = null;
     String[] columnNames;
-    private String tableName;
+    private static String tableName;
     private JTable resultTable = null;
 
     public static void setSql_manager(connectionManager sql_manager) {
@@ -170,6 +171,154 @@ public class tablePanel extends JPanel implements ActionListener,TableModelListe
                 insertRow();
             }
         });
+        JMenuItem getTableItem = null;
+        JMenuItem getTableItem2 = null;
+        JMenuItem getTableItem3 = null;
+        if (tableName.equals("Customer")){
+            getTableItem2 = new JMenuItem("Get clients' start location");
+            getTableItem2.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                        parentFrame.cPanel.setNoSelectedOption();
+                        parentFrame.changeContent(sql_manager.getClientStartLoc());
+                }
+            });
+        }
+        if (tableName.equals("Store")) {
+            getTableItem = new JMenuItem("Get clients registered here");
+            getTableItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+
+                    try {
+                        parentFrame.cPanel.setNoSelectedOption();
+                        parentFrame.changeContent(sql_manager.getRegisteredAt(resultTable.getValueAt(resultTable.getSelectedRow(),4)));
+                    } catch (SQLException je) {
+                        System.out.println(je.getMessage());
+                    } catch (NoSuchElementException ex) {
+                        JOptionPane.showMessageDialog(parentFrame,"It appears no customers have" +
+                                " registered at " + resultTable.getValueAt(resultTable.getSelectedRow(),4)+".","No" +
+                                " Results",JOptionPane.ERROR_MESSAGE);
+                    }
+
+                }
+            });
+        }
+        if (tableName.equals("Store")) {
+            getTableItem2 = new JMenuItem("Get damaged vehicles here");
+            getTableItem2.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+
+                    try {
+                        parentFrame.cPanel.setNoSelectedOption();
+                        parentFrame.changeContent(sql_manager.getDamagedVehiclesAt(resultTable.getValueAt(resultTable.getSelectedRow(),4).toString()));
+                    } catch (NoSuchElementException ex) {
+                        JOptionPane.showMessageDialog(parentFrame,"It appears no vehicles are damaged" +
+                                "  at " + resultTable.getValueAt(resultTable.getSelectedRow(),4)+".","No" +
+                                " Results",JOptionPane.ERROR_MESSAGE);
+                    }
+
+                }
+            });
+        }
+        if (tableName.equals("Vehicle")) {
+            getTableItem = new JMenuItem("Show Fuel Types");
+            getTableItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    System.out.println("Right-click performed on table and choose fueltype");
+                    parentFrame.cPanel.setNoSelectedOption();
+                    parentFrame.changeContent(sql_manager.getFuelTypes());
+                }
+            });
+        }
+        if (tableName.equals("Payment_Transaction")) {
+            getTableItem = new JMenuItem("Show aggregate");
+            getTableItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    System.out.println("Right-click performed on table and choose aggregate");
+                    String agg = sql_manager.getPaymentAggregate();
+                    JOptionPane.showMessageDialog(parentFrame,"Aggregate is: " + agg,"Aggregate",JOptionPane.INFORMATION_MESSAGE);
+                }
+            });
+        }
+
+
+
+        if (tableName.equals("Customer")) {
+            getTableItem = new JMenuItem("Get Customers per city");
+            getTableItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    System.out.println("Right-click performed on table and choose customer/city");
+                    parentFrame.cPanel.setNoSelectedOption();
+                    parentFrame.changeContent(sql_manager.showClientsPerCity());
+
+                }
+            });
+        }
+        if (tableName.equals("Customer")) {
+            getTableItem2 = new JMenuItem("Good customers");
+            getTableItem2.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    System.out.println("Right-click performed on table and choose good customer");
+                    parentFrame.cPanel.setNoSelectedOption();
+                    parentFrame.changeContent(sql_manager.bestClients());
+                }
+            });
+        }
+        if (tableName.equals("Customer")) {
+            getTableItem3 = new JMenuItem("Prepaid");
+            getTableItem3.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    System.out.println("Right-click performed on table and choose prepaid");
+                    parentFrame.cPanel.setNoSelectedOption();
+                    parentFrame.changeContent(sql_manager.showPrepaid());
+                }
+            });
+        }
+        if (tableName.equals("Employee")) {
+            getTableItem = new JMenuItem("Positions");
+            getTableItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    System.out.println("Right-click performed on table and choose positions");
+                    parentFrame.cPanel.setNoSelectedOption();
+                    parentFrame.changeContent(sql_manager.getPositions());
+
+                }
+            });
+
+        }
+
+        if (tableName.equals("Rents")) {
+            getTableItem = new JMenuItem("Show minimum charged car");
+            getTableItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    System.out.println("Right-click performed on table and choose Least Profit");
+                    parentFrame.cPanel.setNoSelectedOption();
+                    parentFrame.changeContent(sql_manager.getMinRentInfo());
+
+                }
+            });
+        }
+        if (tableName.equals("Rents")) {
+            getTableItem2 = new JMenuItem("High season rents");
+            getTableItem2.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    System.out.println("Right-click performed on table and choose highseason");
+                    parentFrame.cPanel.setNoSelectedOption();
+                    parentFrame.changeContent(sql_manager.highSeasonRents());
+
+                }
+            });
+        }
         //select with right click
         rightClickMenu.addPopupMenuListener(new PopupMenuListener() {
             @Override
@@ -191,9 +340,20 @@ public class tablePanel extends JPanel implements ActionListener,TableModelListe
             public void popupMenuCanceled(PopupMenuEvent e) {
             }
         });
+
+        if (!sql_manager.editable(tableName) || (parentFrame != null &&parentFrame.cPanel.getSelectedOption() == null)) {
+            editItem.setEnabled(false);
+            insertItem.setEnabled(false);
+            deleteItem.setEnabled(false);
+        }
+
         rightClickMenu.add(editItem);
         rightClickMenu.add(insertItem);
         rightClickMenu.add(deleteItem);
+        if (getTableItem != null) rightClickMenu.add(getTableItem);
+        if (getTableItem2 != null) rightClickMenu.add(getTableItem2);
+        if (getTableItem3 != null) rightClickMenu.add(getTableItem3);
+
         resultTable.setComponentPopupMenu(rightClickMenu);
 
 
@@ -281,7 +441,8 @@ public class tablePanel extends JPanel implements ActionListener,TableModelListe
             JFrame popUpFrame = new JFrame("Edit row " + row);
             popUpFrame.setLayout(new FlowLayout());
             popUpFrame.add(editForm);
-            popUpFrame.setLocation(location);   //set pop up location
+            if (location != null) popUpFrame.setLocation(location);   //set pop up location
+            else    popUpFrame.setLocationRelativeTo(this);
             popUpFrame.setAlwaysOnTop(true);    //Make it stay on top
 
             JPanel askDonePan = new JPanel();
