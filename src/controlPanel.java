@@ -154,5 +154,6 @@ public class controlPanel extends JPanel {
     public void refresh(String newTable) {
         currentTable = newTable;
         editability.setText(sql_manager.editable(currentTable)? "Editable" : "Not Editable");
+        if (viewOption.getSelectedItem() == null) editability.setText("Not Editable");
     }
 }

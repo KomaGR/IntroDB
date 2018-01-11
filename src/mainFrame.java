@@ -33,6 +33,30 @@ public class mainFrame extends JFrame {
         JMenuItem options = new JMenuItem("Options");
         JMenuItem usage = new JMenuItem("Usage");
         JMenuItem about = new JMenuItem("About");
+        JMenu archive = new JMenu("Archive");
+        JMenuItem rentfall2017 = new JMenuItem("Fall 2017");
+        JMenuItem pastEmployees = new JMenuItem("Past employees");
+
+        menuBar.add(archive);
+
+        rentfall2017.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                cPanel.setNoSelectedOption();
+                changeContent(sql_manager.getRentArchive("Fall-2017"));
+            }
+        });
+
+        pastEmployees.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                cPanel.setNoSelectedOption();
+                changeContent(sql_manager.pastEmployees());
+            }
+        });
+
+        archive.add(rentfall2017);
+        archive.add(pastEmployees);
 
         options.addActionListener(new ActionListener() {
             @Override

@@ -234,8 +234,8 @@ public class connectionManager {
 //                System.out.println(response);
                 return;
             case "Vehicle":
-                q = "UPDATE Vehicle SET Model = ?, Type = ?, Year = ?, Kilometers = ?, Cylinder_Capacity = ?, Horse_Power = ?, " +
-                        "Damages = ?, Malfunctions = ?, Next_Service = ?, Insurance_Exp_Date = ?, Last_Service = ?, Store_id = ?, Make = ? WHERE License_Plate = ?";
+                q = "UPDATE Vehicle SET Model = ?, Type = ?, Make = ?, Year = ?, Kilometers = ?, Cylinder_Capacity = ?, Horse_Power = ?, " +
+                        "Damages = ?, Malfunctions = ?, Next_Service = ?, Insurance_Exp_Date = ?, Last_Service = ?, Store_id = ? WHERE License_Plate = ?";
                 PreparedStatement stmt2 = connection.prepareStatement(q);
                 stmt2.setString(1,values[1]);
                 stmt2.setString(2,values[2]);
@@ -577,6 +577,65 @@ public class connectionManager {
     return rs;
     }
 
+    public ResultSet getRentArchive(String period) {
+        switch (period) {
+            case "Fall-2017":
+                String q = "SELECT * FROM Fall_Rents_2017";
+                try {
+                    PreparedStatement statement = connection.prepareStatement(q);
+                    return statement.executeQuery();
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+                break;
+            default:
+                return null;
+        }
+        return null;
+    }
+    public ResultSet getStoresInfo() {
+        String q = "SELECT * FROM Our_Stores";
+        try {
+            PreparedStatement statement = connection.prepareStatement(q);
+            return statement.executeQuery();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+    public ResultSet getStatute() {
+        String q = "SELECT * FROM Statute";
+        try {
+            PreparedStatement statement = connection.prepareStatement(q);
+            return statement.executeQuery();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+    public ResultSet vehiclesToRepair() {
+        String q = "SELECT * FROM Vehicles_In_Need_of_Repair";
+        try {
+            PreparedStatement statement = connection.prepareStatement(q);
+            return statement.executeQuery();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+    public ResultSet pastEmployees() {
+        String q = "SELECT * FROM Past_Employees";
+        try {
+            PreparedStatement statement = connection.prepareStatement(q);
+            return statement.executeQuery();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+
 }
+//TODO: || HAVING FIX || FK on Delete cascade
 
 

@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.sql.*;
 
 
@@ -20,7 +21,13 @@ public class Main {
 
 //            sql_manager = new connectionManager(conn_username, password, "mysql", serverName, dbname, portNumber);
             sql_manager = new connectionManager();
+            DriverManager.setLoginTimeout(10);
             conn = sql_manager.getConnection();
+            if (conn == null) {
+                JOptionPane.showMessageDialog(new JFrame(),"There appear to be internet connection problems. Please" +
+                        " try again.","Problem connecting",JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
 //            rs = sql_manager.getClients("First_Name",true);
 

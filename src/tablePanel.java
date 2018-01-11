@@ -223,6 +223,16 @@ public class tablePanel extends JPanel implements ActionListener,TableModelListe
                 }
             });
         }
+        if (tableName.equals("Store")) {
+            getTableItem3 = new JMenuItem("More Info...");
+            getTableItem3.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                        parentFrame.cPanel.setNoSelectedOption();
+                        parentFrame.changeContent(sql_manager.getStoresInfo());
+                }
+            });
+        }
         if (tableName.equals("Vehicle")) {
             getTableItem = new JMenuItem("Show Fuel Types");
             getTableItem.addActionListener(new ActionListener() {
@@ -231,6 +241,30 @@ public class tablePanel extends JPanel implements ActionListener,TableModelListe
                     System.out.println("Right-click performed on table and choose fueltype");
                     parentFrame.cPanel.setNoSelectedOption();
                     parentFrame.changeContent(sql_manager.getFuelTypes());
+                }
+            });
+        }
+        if (tableName.equals("Vehicle")) {
+            getTableItem2 = new JMenuItem("In need of repair");
+            getTableItem2.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    System.out.println("Right-click performed on table and choose repair");
+                    ResultSet rs = sql_manager.vehiclesToRepair();
+                    try {
+                        if (!rs.next()){
+                            JOptionPane.showMessageDialog(parentFrame,"No vehicles have been placed in this table.",
+                                    "No Result",JOptionPane.ERROR_MESSAGE);
+                            rs.beforeFirst();
+                        } else {
+                            parentFrame.cPanel.setNoSelectedOption();
+                            parentFrame.changeContent(rs);
+
+                        }
+
+                    } catch (SQLException ke) {
+                        System.out.println(ke.getMessage());
+                    }
                 }
             });
         }
@@ -290,7 +324,18 @@ public class tablePanel extends JPanel implements ActionListener,TableModelListe
                     System.out.println("Right-click performed on table and choose positions");
                     parentFrame.cPanel.setNoSelectedOption();
                     parentFrame.changeContent(sql_manager.getPositions());
+                }
+            });
 
+        }
+        if (tableName.equals("Employee")) {
+            getTableItem2 = new JMenuItem("Current employees");
+            getTableItem2.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    System.out.println("Right-click performed on table and choose statute");
+                    parentFrame.cPanel.setNoSelectedOption();
+                    parentFrame.changeContent(sql_manager.getStatute());
                 }
             });
 
