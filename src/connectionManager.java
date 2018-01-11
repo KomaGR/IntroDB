@@ -1,5 +1,8 @@
+import com.sun.org.apache.xpath.internal.functions.FuncExtElementAvailable;
+
 import javax.swing.plaf.nimbus.State;
 import java.sql.*;
+import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -15,6 +18,7 @@ public class connectionManager {
     private queryBuffer qBuffer = new queryBuffer();
     private Connection connection = null;
     private boolean autoCommit = false;
+    private List<String> cityList;
 
     public connectionManager(String userName, String password, String dbms, String serverName, String dbName, String portNumber) {
         this.userName = userName;
@@ -23,6 +27,11 @@ public class connectionManager {
         this.serverName = serverName;
         this.dbName = dbName;
         this.portNumber = portNumber;
+        cityList.add("ATHENS");
+        cityList.add("THESSALONIKI");
+        cityList.add("PATRA");
+        cityList.add("IRAKLIO KRITIS");
+        cityList.add("RODOS");
     }
 
     public connectionManager() {
@@ -164,6 +173,7 @@ public class connectionManager {
                 q = "SELECT V.License_Plate, V.Model, V.Type, V.Make, V.Year, V.Kilometers, V.Cylinder_Capacity, V.Horse_Power, V.Damages, V.Malfunctions, V.Next_Service, V.Insurance_Exp_Date, V.Last_Service, S.City\n" +
                         "FROM Vehicle V\n" +
                         "INNER JOIN Store S ON V.Store_id = S.Store_id;";
+                q = "SELECT * FROM Vehicle";
                 PreparedStatement stmt3 = connection.prepareStatement(q);
                 return stmt3.executeQuery();
             case "Statute":
@@ -212,7 +222,7 @@ public class connectionManager {
 //                System.out.println(stmt0.toString());
                 if (autoCommit) stmt0.executeUpdate();
                 else qBuffer.add(stmt0);
-//                response = stmt0.executeUpdate();   //TODO: Enqueue instead of execute
+//                response = stmt0.executeUpdate();
 //                System.out.println(response);
                 return;
             case "Employee":
@@ -230,12 +240,12 @@ public class connectionManager {
                 stmt1.setString(9,values[0]);
                 if (autoCommit) stmt1.executeUpdate();
                 else qBuffer.add(stmt1);
-//                response = stmt1.executeUpdate();   //TODO: Enqueue instead of execute
+//                response = stmt1.executeUpdate();
 //                System.out.println(response);
                 return;
             case "Vehicle":
-                q = "UPDATE Vehicle SET Model = ?, Type = ?, Make = ?, Year = ?, Kilometers = ?, Cylinder_Capacity = ?, Horse_Power = ?, " +
-                        "Damages = ?, Malfunctions = ?, Next_Service = ?, Insurance_Exp_Date = ?, Last_Service = ?, Store_id = ? WHERE License_Plate = ?";
+                q = "UPDATE Vehicle SET Model = ?, Type = ?, Year = ?, Kilometers = ?, Cylinder_Capacity = ?, Horse_Power = ?, " +
+                        "Damages = ?, Malfunctions = ?, Next_Service = ?, Insurance_Exp_Date = ?, Last_Service = ?, Store_id = ?, Make = ? WHERE License_Plate = ?";
                 PreparedStatement stmt2 = connection.prepareStatement(q);
                 stmt2.setString(1,values[1]);
                 stmt2.setString(2,values[2]);
@@ -253,7 +263,7 @@ public class connectionManager {
                 stmt2.setString(14,values[0]);
                 if (autoCommit) stmt2.executeUpdate();
                 else qBuffer.add(stmt2);
-//                response = stmt2.executeUpdate();   //TODO: Enqueue instead of execute
+//                response = stmt2.executeUpdate();
 //                System.out.println(response);
                 return;
             case "Customer":
@@ -274,6 +284,13 @@ public class connectionManager {
                 if (autoCommit) stmt3.executeUpdate();
                 else qBuffer.add(stmt3);
         }
+
+    }
+
+    private String getCityId(String value) {
+        List<String> stringList = cityList;
+        int index = stringList.indexOf(value);
+       return Integer.toString(index);
 
     }
 
@@ -320,10 +337,31 @@ public class connectionManager {
                 else qBuffer.add(stmt2);
                 return;
             case "Vehicle":
-                q = "";
+                q = "DELETE FROM Vehicle WHERE License_Plate = ?";
                 PreparedStatement stmt3 = connection.prepareStatement(q);
+                stmt3.setString(1,valueAt.toString());
                 if (autoCommit) stmt3.executeUpdate();
                 else qBuffer.add(stmt3);
+        }
+    }
+
+    public void assignFuelTypeToVehicle(String PK, String fuelType) {
+        String q = "INSERT INTO Fuel_Type(License_Plate, Fuel_Type) VALUES (?,?)";
+        try {
+            PreparedStatement stmt3 = connection.prepareStatement(q);
+            stmt3.setString(1,PK);
+            stmt3.setString(2,fuelType);
+            stmt3.executeUpdate();
+        } catch (SQLException e){
+            try {
+                String q2 = "UPDATE Fuel_Type SET Fuel_Type = ? WHERE License_Plate = ?";
+                PreparedStatement backup = connection.prepareStatement(q2);
+                backup.setString(1, fuelType);
+                backup.setString(2,PK);
+                backup.executeUpdate();
+            } catch (SQLException e2) {
+                System.out.println(e2.getMessage());
+            }
         }
     }
 
@@ -377,8 +415,22 @@ public class connectionManager {
                 else qBuffer.add(stmt2);
                 return;
             case "Vehicle":
-                q = "";
+                q = "INSERT INTO Vehicle(License_Plate, Model, Type, Year, Kilometers, Cylinder_Capacity, Horse_Power, Damages, Malfunctions, Next_Service, Insurance_Exp_Date, Last_Service, Store_id, Make) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
                 PreparedStatement stmt3 = connection.prepareStatement(q);
+                stmt3.setString(1,values[0]);
+                stmt3.setString(2,values[1]);
+                stmt3.setString(3,values[2]);
+                stmt3.setString(4,values[3]);
+                stmt3.setString(5,values[4]);
+                stmt3.setString(6,values[5]);
+                stmt3.setString(7,values[6]);
+                stmt3.setString(8,values[7]);
+                stmt3.setString(9,values[8]);
+                stmt3.setString(10,values[9]);
+                stmt3.setString(11,values[10]);
+                stmt3.setString(12,values[11]);
+                stmt3.setString(13,values[12]);
+                stmt3.setString(14,values[13]);
                 if (autoCommit) stmt3.executeUpdate();
                 else qBuffer.add(stmt3);
         }
@@ -412,7 +464,7 @@ public class connectionManager {
 
     public ResultSet getRegisteredAt(Object valueAt) throws SQLException {
         String storeName = valueAt.toString();
-        String q = "SELECT  Customer_id ,First_Name,City, First_Registration FROM Customer GROUP BY First_Name HAVING First_Registration LIKE ?";
+        String q = "SELECT  Customer_id ,First_Name,Last_Name,City, First_Registration FROM Customer GROUP BY Last_Name,First_Name HAVING First_Registration LIKE ?";
         PreparedStatement regstrdAt = connection.prepareStatement(q);
         regstrdAt.setString(1,storeName);
         return regstrdAt.executeQuery();
@@ -549,13 +601,7 @@ public class connectionManager {
     return rs;
     }
     public ResultSet bestRents() {
-    String q = "SELECT C.Last_Name, C.First_Name, R.Start_date, R.Finish_Date, V.License_Plate, P.Payment_Amount FROM Customer C INNER JOIN Rents R" +
-            "    ON C.Customer_id = R.Customer_id" +
-            "INNER JOIN Vehicle V" +
-            "  ON R.License_Plate = V.License_Plate" +
-            "INNER JOIN rentexdb.Payment_Transaction P" +
-            "    ON R.License_Plate = P.Licence_Plate" +
-            "ORDER BY Payment_Amount DESC ;";
+    String q = "SELECT C.Last_Name, C.First_Name, R.Start_date, R.Finish_Date, V.License_Plate, P.Payment_Amount FROM Customer C INNER JOIN Rents R  ON C.Customer_id = R.Customer_id INNER JOIN Vehicle V ON R.License_Plate = V.License_Plate INNER JOIN rentexdb.Payment_Transaction P ON R.License_Plate = P.Licence_Plate ORDER BY Payment_Amount DESC ;";
     ResultSet rs = null;
     try {
         PreparedStatement agg = connection.prepareStatement(q);
@@ -635,6 +681,27 @@ public class connectionManager {
     }
 
 
+    public ResultSet getCoverage() {
+            String q = "SELECT Statute.Position, COUNT(*) FROM Statute GROUP BY Position";
+            try {
+                PreparedStatement statement = connection.prepareStatement(q);
+                return statement.executeQuery();
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+            return null;
+    }
+
+    public ResultSet getLowCoveragePositions() {
+            String q = "SELECT Statute.Position, COUNT(*) AS we_have_few FROM Statute GROUP BY Position HAVING we_have_few < 10";
+            try {
+                PreparedStatement statement = connection.prepareStatement(q);
+                return statement.executeQuery();
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+            return null;
+    }
 }
 //TODO: || HAVING FIX || FK on Delete cascade
 

@@ -15,7 +15,7 @@ import java.util.Vector;
 
 public class tablePanel extends JPanel implements ActionListener,TableModelListener {
     static dataPort dataPort = new dataPort();
-    JScrollPane scrollPane = null;
+    static JScrollPane scrollPane = null;
     private static mainFrame parentFrame = null;
     static connectionManager sql_manager = null;
     String[] columnNames;
@@ -207,19 +207,26 @@ public class tablePanel extends JPanel implements ActionListener,TableModelListe
         }
         if (tableName.equals("Store")) {
             getTableItem2 = new JMenuItem("Get damaged vehicles here");
+            getTableItem2.setEnabled(false);
             getTableItem2.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
 
+                    ResultSet rs = sql_manager.getDamagedVehiclesAt((resultTable.getValueAt(resultTable.getSelectedRow(),4).toString()));
                     try {
-                        parentFrame.cPanel.setNoSelectedOption();
-                        parentFrame.changeContent(sql_manager.getDamagedVehiclesAt(resultTable.getValueAt(resultTable.getSelectedRow(),4).toString()));
-                    } catch (NoSuchElementException ex) {
-                        JOptionPane.showMessageDialog(parentFrame,"It appears no vehicles are damaged" +
-                                "  at " + resultTable.getValueAt(resultTable.getSelectedRow(),4)+".","No" +
-                                " Results",JOptionPane.ERROR_MESSAGE);
-                    }
+                        if (!rs.next()){
+                            JOptionPane.showMessageDialog(parentFrame,"No vehicles have been placed in this table.",
+                                    "No Result",JOptionPane.ERROR_MESSAGE);
+                            rs.beforeFirst();
+                        } else {
+                            rs.beforeFirst();
+                            parentFrame.cPanel.setNoSelectedOption();
+                            parentFrame.changeContent(rs);
 
+                        }
+                    } catch (SQLException ke) {
+                        System.out.println(ke.getMessage());
+                    }
                 }
             });
         }
@@ -257,6 +264,7 @@ public class tablePanel extends JPanel implements ActionListener,TableModelListe
                                     "No Result",JOptionPane.ERROR_MESSAGE);
                             rs.beforeFirst();
                         } else {
+                            rs.beforeFirst();
                             parentFrame.cPanel.setNoSelectedOption();
                             parentFrame.changeContent(rs);
 
@@ -265,6 +273,64 @@ public class tablePanel extends JPanel implements ActionListener,TableModelListe
                     } catch (SQLException ke) {
                         System.out.println(ke.getMessage());
                     }
+                }
+            });
+        }
+        if (tableName.equals("Vehicle")) {
+            getTableItem3 = new JMenuItem("Assign fuel type");
+            getTableItem3.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    System.out.println("Right-click performed on table and choose fueltype");
+                    ResultSet rs = sql_manager.vehiclesToRepair();
+                    String[] fields = {"License Plate","Fuel Type"};
+                    String License_Plate = resultTable.getValueAt(resultTable.getSelectedRow(),0).toString();
+                    String[] values = {License_Plate,""};
+                    JForm editForm = new JForm(fields,values);
+                    editForm.setEditability(0,false);
+                    JFrame popUpFrame = new JFrame("Insert into " + tableName);
+                    popUpFrame.setLayout(new FlowLayout());
+                    popUpFrame.add(editForm);
+                    popUpFrame.setLocation(parentFrame.getLocation());   //set pop up location
+                    popUpFrame.setAlwaysOnTop(true);
+                    JPanel askDonePan = new JPanel();
+                    // OK Button and Listener
+                    JButton okButton = new JButton("OK");
+                    okButton.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mouseClicked(MouseEvent mouseEvent) {
+                            super.mouseClicked(mouseEvent);
+
+                            //Close window and enqueue changes
+                            String[] editedFields = editForm.getTextFields();
+                            popUpFrame.dispatchEvent(new WindowEvent(popUpFrame, WindowEvent.WINDOW_CLOSING));
+                            if (editedFields != null) {
+                                //enqueue change
+                                System.out.println("Enqueue changes");
+                                    sql_manager.assignFuelTypeToVehicle(License_Plate,editedFields[1]);
+                                    parentFrame.refreshContent();
+                            } else
+                                System.out.println("No values");
+
+                        }
+                    });
+                    askDonePan.add(okButton);
+                    JButton cancelButton = new JButton("Cancel");
+                    cancelButton.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mouseClicked(MouseEvent mouseEvent) {
+                            super.mouseClicked(mouseEvent);
+                            System.out.println("Discard changes");
+                            popUpFrame.dispatchEvent(new WindowEvent(popUpFrame, WindowEvent.WINDOW_CLOSING));
+                        }
+                    });
+                    askDonePan.add(cancelButton);
+
+                    popUpFrame.add(askDonePan);
+
+                    popUpFrame.setSize(new Dimension(350, columnNames.length * 35 + 50));
+                    popUpFrame.setVisible(true);
+                    popUpFrame.requestFocus();
                 }
             });
         }
@@ -336,6 +402,30 @@ public class tablePanel extends JPanel implements ActionListener,TableModelListe
                     System.out.println("Right-click performed on table and choose statute");
                     parentFrame.cPanel.setNoSelectedOption();
                     parentFrame.changeContent(sql_manager.getStatute());
+                }
+            });
+
+        }
+        if (tableName.equals("Employee")) {
+            getTableItem3 = new JMenuItem("Position coverage");
+            getTableItem3.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    System.out.println("Right-click performed on table and choose coverage");
+                    parentFrame.cPanel.setNoSelectedOption();
+                    parentFrame.changeContent(sql_manager.getCoverage());
+                }
+            });
+
+        }
+        if (tableName.equals("Employee")) {
+            getTableItem4 = new JMenuItem("Low coverage positions");
+            getTableItem4.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    System.out.println("Right-click performed on table and choose low coverage");
+                    parentFrame.cPanel.setNoSelectedOption();
+                    parentFrame.changeContent(sql_manager.getLowCoveragePositions());
                 }
             });
 
