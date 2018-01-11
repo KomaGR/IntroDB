@@ -548,6 +548,35 @@ public class connectionManager {
     }
     return rs;
     }
+    public ResultSet bestRents() {
+    String q = "SELECT C.Last_Name, C.First_Name, R.Start_date, R.Finish_Date, V.License_Plate, P.Payment_Amount FROM Customer C INNER JOIN Rents R" +
+            "    ON C.Customer_id = R.Customer_id" +
+            "INNER JOIN Vehicle V" +
+            "  ON R.License_Plate = V.License_Plate" +
+            "INNER JOIN rentexdb.Payment_Transaction P" +
+            "    ON R.License_Plate = P.Licence_Plate" +
+            "ORDER BY Payment_Amount DESC ;";
+    ResultSet rs = null;
+    try {
+        PreparedStatement agg = connection.prepareStatement(q);
+        rs = agg.executeQuery();
+    } catch (SQLException e) {
+        System.out.println(e.getMessage());
+    }
+    return rs;
+    }
+    public ResultSet topTen() {
+    String q = "SELECT * FROM rentexdb.Payment_Transaction ORDER BY Payment_Amount DESC LIMIT 10;";
+    ResultSet rs = null;
+    try {
+        PreparedStatement agg = connection.prepareStatement(q);
+        rs = agg.executeQuery();
+    } catch (SQLException e) {
+        System.out.println(e.getMessage());
+    }
+    return rs;
+    }
+
 }
 
 

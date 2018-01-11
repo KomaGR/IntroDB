@@ -174,6 +174,7 @@ public class tablePanel extends JPanel implements ActionListener,TableModelListe
         JMenuItem getTableItem = null;
         JMenuItem getTableItem2 = null;
         JMenuItem getTableItem3 = null;
+        JMenuItem getTableItem4 = null;
         if (tableName.equals("Customer")){
             getTableItem2 = new JMenuItem("Get clients' start location");
             getTableItem2.addActionListener(new ActionListener() {
@@ -319,6 +320,30 @@ public class tablePanel extends JPanel implements ActionListener,TableModelListe
                 }
             });
         }
+        if (tableName.equals("Rents")) {
+            getTableItem3 = new JMenuItem("Best rents");
+            getTableItem3.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    System.out.println("Right-click performed on table and choose bestrents");
+                    parentFrame.cPanel.setNoSelectedOption();
+                    parentFrame.changeContent(sql_manager.highSeasonRents());
+
+                }
+            });
+        }
+        if (tableName.equals("Rents")) {
+            getTableItem4 = new JMenuItem("Top 10 Rents");
+            getTableItem4.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    System.out.println("Right-click performed on table and choose topten");
+                    parentFrame.cPanel.setNoSelectedOption();
+                    parentFrame.changeContent(sql_manager.topTen());
+
+                }
+            });
+        }
         //select with right click
         rightClickMenu.addPopupMenuListener(new PopupMenuListener() {
             @Override
@@ -353,6 +378,7 @@ public class tablePanel extends JPanel implements ActionListener,TableModelListe
         if (getTableItem != null) rightClickMenu.add(getTableItem);
         if (getTableItem2 != null) rightClickMenu.add(getTableItem2);
         if (getTableItem3 != null) rightClickMenu.add(getTableItem3);
+        if (getTableItem4 != null) rightClickMenu.add(getTableItem4);
 
         resultTable.setComponentPopupMenu(rightClickMenu);
 
