@@ -43,7 +43,11 @@ public class tablePanel extends JPanel implements ActionListener,TableModelListe
     private String[] getRowAt(JTable table, int row, int colNumber) {
         String[] result = new String[colNumber];
         for (int i = 0; i < colNumber; i++) {
-            result[i] = table.getModel().getValueAt(row, i).toString();
+            try {
+                result[i] = table.getModel().getValueAt(row, i).toString();
+            } catch (NullPointerException e) {
+                result[i] = null;   // Null pointer exception here just means that field is empty
+            }
         }
         return result;
     }
