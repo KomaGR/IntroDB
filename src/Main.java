@@ -8,11 +8,6 @@ public class Main {
     static mainFrame frame;
     static dataPort dataPort = new dataPort();
     private static connectionManager sql_manager;
-//    private static String conn_username = "dbapp";
-//    private static String password = "p!nkp@anther";
-//    private static String serverName = "snf-795627.vm.okeanos.grnet.gr"; //"localhost";
-//    private static String dbname = "rentexdb";
-//    private static String portNumber = "3306";
     public static ResultSet rs;
 
 
