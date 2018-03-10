@@ -7,12 +7,12 @@ import java.util.Vector;
 
 public class connectionManager {
     private dataPort dataPort = new dataPort();
-    private String userName = "dbapp";
-    private String password = "p!nkp@anther";
+    private String userName = "username";
+    private String password = "password";
     private String dbms = "mysql";
-    private String serverName = "snf-795627.vm.okeanos.grnet.gr";
-    private String dbName = "rentexdb";
-    private String portNumber = "3306";
+    private String serverName = "serverName";
+    private String dbName = "dbName";
+    private String portNumber = "portNumber";
     private queryBuffer qBuffer = new queryBuffer();
     private Connection connection = null;
     private boolean autoCommit = false;
